@@ -3,7 +3,7 @@
     
 <%@ include file="../include/header2.jsp" %>
     <!-- ##### Breadcumb Area Start ##### -->
-    <section class="breadcumb-area bg-img bg-overlay" style="background-image: url(../img/bg-img/breadcumb3.jpg);">
+    <section class="breadcumb-area bg-img bg-overlay" style="background-image: url(img/bg-img/breadcumb3.jpg);">
         <div class="bradcumbContent">
             <p>See what’s new</p>
             <h2>Login / Register</h2>
@@ -31,7 +31,7 @@
                                     <input type="password" id="pw" class="form-control" placeholder="Password">
                                 </div>
                                 <button type=button id="btnLogin" class="btn oneMusic-btn mt-30">Login</button>
-                                <a href="../web/join.jsp"><button type="button" class="btn oneMusic-btn mt-30">Register</button></a>
+                                <a href="p_join.do"><button type="button" class="btn oneMusic-btn mt-30">Register</button></a>
                             </form>
                         </div>
                     </div>
@@ -48,14 +48,14 @@
 	var query={"id":$("#id").val(), "pw":$("#pw").val()};
 		$.ajax({
 			type:"post",
-			url:"../login.do",
+			url:"login.do",
 			async:false,
 			data:query,
 			dataType:"text",
 			success:function(data,textStatus){
 				if(data==1){
 					alert("success");
-					location.href="mypage.jsp";
+					location.href="mypage.do";
 				}else if(data==0){
 					alert("password error")
 				}else{
@@ -63,7 +63,7 @@
 				}
 			},error:function(data,textStatus){
 				alert("error")
-			},complete:function(data,textStatus){}
+			}
 		});
 	});
     

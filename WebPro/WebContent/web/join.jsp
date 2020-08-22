@@ -47,13 +47,13 @@ input[type=range] {
 }
 </style>
 <section class="breadcumb-area bg-img bg-overlay"
-	style="background-image: url(../img/web-img/main-back4-2.jpg);">
+	style="background-image: url(img/web-img/main-back4-2.jpg);">
 	<div class="bradcumbContent">
 		<p></p>
 		<h2>JOIN</h2>
 	</div>
 </section>
-<form action="../join.do" method="post">
+<form action="join.do" method="post">
 	<section class="latest-albums-area section-padding-100">
 		<div class="row">
 			<div class="col-6">
@@ -198,7 +198,7 @@ input[type=range] {
 		}
 		$.ajax({
 			type:"post",
-			url:"../overappedId.do",
+			url:"overappedId.do",
 			data:{"id":$("#id").val()},
 			async:false,
 			dataType:"text",

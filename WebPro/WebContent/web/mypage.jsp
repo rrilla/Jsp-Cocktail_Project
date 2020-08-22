@@ -3,18 +3,15 @@
     
 <%@ include file="../include/header2.jsp" %>
 
+<section class="breadcumb-area bg-img bg-overlay" style="background-image: url(img/web-img/main-back4-2.jpg);">
+        <div class="bradcumbContent">
+            <p>zz</p>
+            <h2>My Page</h2>
+        </div>
+    </section>
 <!-- ##### Latest Albums Area Start ##### -->
     <section class="latest-albums-area section-padding-100">
         <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="section-heading style-2" style="margin-top: 80px;">
-                        <h2>MY PAGE</h2>
-                    </div>
-                </div>
-            </div>
-            
-            
             <div class="row justify-content-center">
                 <div class="col-12 col-lg-9">
                     <div class="ablums-text text-center mb-70">
@@ -34,7 +31,7 @@
                     <div class="albums-slideshow owl-carousel">
                         <!-- Single Album -->
                         <div class="single-album">
-                            <img src="../img/bg-img/a1.jpg" alt="">
+                            <img src="img/bg-img/a1.jpg" alt="">
                             <div class="album-info">
                                 <a href="#">
                                     <h5>The Cure</h5>
@@ -45,7 +42,7 @@
 
                         <!-- Single Album -->
                         <div class="single-album">
-                            <img src="../img/bg-img/a2.jpg" alt="">
+                            <img src="img/bg-img/a2.jpg" alt="">
                             <div class="album-info">
                                 <a href="#">
                                     <h5>Sam Smith</h5>
@@ -56,7 +53,7 @@
 
                         <!-- Single Album -->
                         <div class="single-album">
-                            <img src="../img/bg-img/a3.jpg" alt="">
+                            <img src="img/bg-img/a3.jpg" alt="">
                             <div class="album-info">
                                 <a href="#">
                                     <h5>Will I am</h5>
@@ -67,7 +64,7 @@
 
                         <!-- Single Album -->
                         <div class="single-album">
-                            <img src="../img/bg-img/a4.jpg" alt="">
+                            <img src="img/bg-img/a4.jpg" alt="">
                             <div class="album-info">
                                 <a href="#">
                                     <h5>The Cure</h5>
@@ -78,7 +75,7 @@
 
                         <!-- Single Album -->
                         <div class="single-album">
-                            <img src="../img/bg-img/a5.jpg" alt="">
+                            <img src="img/bg-img/a5.jpg" alt="">
                             <div class="album-info">
                                 <a href="#">
                                     <h5>DJ SMITH</h5>
@@ -89,7 +86,7 @@
 
                         <!-- Single Album -->
                         <div class="single-album">
-                            <img src="../img/bg-img/a6.jpg" alt="">
+                            <img src="img/bg-img/a6.jpg" alt="">
                             <div class="album-info">
                                 <a href="#">
                                     <h5>The Ustopable</h5>
@@ -100,7 +97,7 @@
 
                         <!-- Single Album -->
                         <div class="single-album">
-                            <img src="../img/bg-img/a7.jpg" alt="">
+                            <img src="img/bg-img/a7.jpg" alt="">
                             <div class="album-info">
                                 <a href="#">
                                     <h5>Beyonce</h5>

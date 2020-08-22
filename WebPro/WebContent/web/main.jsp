@@ -23,7 +23,7 @@
 			class="single-hero-slide d-flex align-items-center justify-content-center">
 			<!-- Slide Img -->
 			<div class="slide-img bg-img" id="main-img"
-				style="background-image: url(../img/web-img/main-back.jpg);"></div>
+				style="background-image: url(img/web-img/main-back.jpg);"></div>
 			
 			<!-- Slide Content -->
 			<div class="container">
@@ -34,9 +34,9 @@
 							<h2 data-animation="fadeInUp" data-delay="300ms">
 								C o c k t a i l <span>C o c k t a i l</span>
 							</h2>
-							<a data-animation="fadeInUp" data-delay="500ms" href="tasteSearch.jsp"
+							<a data-animation="fadeInUp" data-delay="500ms" href="p_tasteSearch.do"
 								class="btn oneMusic-btn mt-50">취향으로  칵테일  찾기 <i class="fa fa-angle-double-right"></i></a><br />
-								<a data-animation="fadeInUp" data-delay="500ms" href="../list.do"
+								<a data-animation="fadeInUp" data-delay="500ms" href="list.do"
 								class="btn oneMusic-btn mt-50">모든 칵테일 리스트 보기<i class="fa fa-angle-double-right"></i></a>
 						</div>
 					</div>

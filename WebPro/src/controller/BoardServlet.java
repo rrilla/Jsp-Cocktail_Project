@@ -2,10 +2,14 @@ package controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.util.List;
+import java.util.Random;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +24,12 @@ import vo.Member;
 public class BoardServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final String FILE_REPO = "E:\\src\\jsp_pro\\BoardProject\\WebContent\\image\\temp";
+	String[] data;
+	
+	public void init(ServletConfig config) throws ServletException {
+		List<String> list = CockDao.getInstance().rName();
+		data = list.toArray(new String[list.size()]);
+	}
        
     protected void doHandle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     	request.setCharacterEncoding("utf-8");
@@ -29,35 +39,59 @@ public class BoardServlet extends HttpServlet {
 		String contextPath = request.getContextPath();
 		String action = requestURI.substring(contextPath.length()+1);
 		
-		if(action.equals("main.do")) {
-			response.sendRedirect("web/main.jsp");
+		if(action.equals("p_main.do")) {
+			//String rName = data[(int)(Math.random()*data.length)];
+			//request.setAttribute("rName", rName);
+			request.getRequestDispatcher("web/main.jsp").forward(request, response);
+			
+		} /*
+			 * else if(action.equals("start.do")) { Cookie c = new Cookie("cNameList",
+			 * URLEncoder.encode(cNameList, "utf-8")); c.setComment("¿Ã∏ß ∞ÀªˆøÎ ƒ¨≈◊¿œ");
+			 * response.addCookie(c);
+			 * 
+			 * request.getRequestDispatcher("web/main.jsp").forward(request, response);
+			 * 
+			 * }
+			 */else if(action.equals("p_login.do")) {
+			//request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
+			request.getRequestDispatcher("web/login.jsp").forward(request, response);
+			
+		}else if(action.equals("p_join.do")) {
+			//request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
+			request.getRequestDispatcher("web/join.jsp").forward(request, response);
+			
+		}else if(action.equals("p_tasteSearch.do")) {
+			//request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
+			request.getRequestDispatcher("web/tasteSearch.jsp").forward(request, response);
 			
 		}else if(action.equals("login.do")) {
+			//request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			String id=request.getParameter("id");
 			String pw=request.getParameter("pw");
 			int n=MemberDao.getInstance().login(id,pw);
 			writer.print(n);
 			if(n==1) {
+				System.out.println(id + " ¥‘¿Ã ∑Œ±◊¿Œ «œΩ….");
 				HttpSession session=request.getSession();
 				session.setAttribute("session_id", id);
 			}
 			
 		}else if(action.equals("logout.do")) {
+			//request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			HttpSession session=request.getSession();
+			System.out.println(session.getAttribute("session_id") + " ¥‘¿Ã ∑Œ±◊æ∆øÙ «œΩ….");
 			session.removeAttribute("session_id");
-			writer.print("success");
+			request.getRequestDispatcher("p_main.do").forward(request, response);
+			//writer.print("success");
 			
-		}else if(action.equals("search.do")) {
-			String cName = request.getParameter("cName");
-			request.setAttribute("cName", cName);
-			request.getRequestDispatcher("web/list.jsp").forward(request, response);
-			 
 		}else if(action.equals("overappedId.do")) {
+			//request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			String id=request.getParameter("id");
 			int n = MemberDao.getInstance().overappedId(id);
 			writer.print(n);
 			
 		}else if(action.equals("join.do")) {
+			//request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			String id=request.getParameter("id");
 			String name=request.getParameter("name");
 			String pw=request.getParameter("pw");
@@ -68,19 +102,44 @@ public class BoardServlet extends HttpServlet {
 			if(flag) {
 				HttpSession session=request.getSession();
 				session.setAttribute("session_id", id);
-				writer.print("<script>alert('ÌöåÏõêÍ∞ÄÏûÖ ÏÑ±Í≥µ');location.href='web/main.jsp';</script>");
+				System.out.println(id + "¥‘¿Ã »∏ø¯∞°¿‘ «œΩ….");
+				writer.print("<script>alert('»∏ø¯∞°¿‘ º∫∞¯');location.href='p_main.do';</script>");
 			}else {
-				writer.print("<script>alert('ÌöåÏõêÍ∞ÄÏûÖ Ïã§Ìå®');location.href='web/join.jsp';</script>");
+				writer.print("<script>alert('»∏ø¯∞°¿‘ Ω«∆–');location.href='p_join.do';</script>");
 			}
 			
+		}else if(action.equals("mypage.do")) {
+			//request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
+			request.getRequestDispatcher("web/mypage.jsp").forward(request, response);
+			 
+		}else if(action.equals("search.do")) {
+			//request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
+			String cName = request.getParameter("cName");
+			List<CockList> nameResult = CockDao.getInstance().searchName(cName);
+			request.setAttribute("cName", cName);
+			request.setAttribute("nameResult", nameResult);
+			request.getRequestDispatcher("web/n_searchList.jsp").forward(request, response);
+			 
 		}else if(action.equals("list.do")) {
+			//request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			CockDao cockDao=CockDao.getInstance();
 			List<CockList> list=cockDao.selectAll();
 			request.setAttribute("list", list);
-			request.getRequestDispatcher("web/list.jsp")
-			.forward(request, response);
+			request.getRequestDispatcher("web/allList.jsp").forward(request, response);
 			
+		}else if(action.equals("detail.do")) {
+			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
+			request.getRequestDispatcher("web/detail.jsp").forward(request, response);
+			
+		}else if(action.equals("test.do")) {
+			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
+			System.out.println("testdo Ω««‡");
+			
+		}else if(action.equals("test2.do")) {
+			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
+			request.getRequestDispatcher("web/search.jsp").forward(request, response);
 		}
+			
 	}
     
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
