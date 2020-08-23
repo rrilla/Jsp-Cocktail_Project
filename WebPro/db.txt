@@ -1,0 +1,120 @@
+--추가, 고려사항
+--테이블별 m_name, m_no 처럼 중복된 컬럼이름 구분해주는게 좋음???
+--댓글,컨텐츠 조회수
+--댓글에 답글 
+--------------------------------------------------------system 
+create user web identified by 1234;     --새유저 생성
+
+grant connect, resource, dba to web;    --유저에 권한부여
+
+--------------------------------------------------------web
+--------------sequence 생성
+create sequence member_seq      --시퀀스생성
+nocache;                        --시퀀스를 빨리 제공하기 위해 메모리에 캐쉬 하는 갯수
+create sequence cocklist_seq
+nocache;
+create sequence content_seq
+nocache;
+create sequence content_comm_seq
+nocache;
+create sequence cocklist_comm_seq
+nocache;
+
+--------------테이블 생성
+create table member(    --member(회원가입시 회원정보 저장, 로그인 유효성검사) 테이블 생성
+no number primary key,
+name varchar(30) not null,
+img_name varchar2(50) default basic.jpg,
+id varchar2(30) not null, unique(id), 
+password varchar2(30) not null,
+address varchar2(50) not null,
+one_s varchar2(30));     --즐겨먹는 술[check(소주, 맥주, 위스키, 와인, 사케, 막걸리 등)]
+
+create table cocklist(  --※미완성※ 칵테일 리스트 페이지 출력, 칵테일 추가시 저장할 테이블
+no number primary key,
+img_name varchar2(50),
+name varchar2(60) not null, unique(name),
+name_e varchar2(60) not null, unique(name_e),
+alike varchar2(50),  --이 칵테일과 유사하며 익숙한 술 종류(member의 one_s랑 매치하여 취향찾을 때 활용)
+base varchar2(50),
+material varchar2(100),
+technique varchar2(50), --기법
+taste varchar2(100),    
+fitting varchar2(100),  --어울리는 때,장소 (식전, 식후, 생일주 등)
+tools varchar2(100),    --조주시 필요 기구
+glass varchar2(50),     --잔
+garnish varchar2(50),
+tmi varchar2(1000)  
+--constraint cock_base_ck check(base in ('보드카', '리큐어', '위스키', '진', '럼', '데킬라', '전통주', '브랜디', '무알콜', '소주', '맥주', '기타')),
+--constraint cock_tec_ck check(technique in ('흔들기', '젓기','직접넣기', '띄우기', '묻히기', '갈기', '으깨지', '거르기', '불붙이기', '그을리기'))
+);
+
+create table member_mycock(     --member(회원)별 저장된 칵테일 저장 테이블
+id varchar2(30) not null,
+cocklist_no number not null, unique(cocklist_no),
+add_date date default sysdate,   --추가일(마이페이지 저장된 칵테일 배치 순서 정렬용도)
+constraint mycock_id_fk foreign key(id) REFERENCES member(id),
+constraint mycock_no_fk foreign key(cocklist_no) REFERENCES cocklist(no)
+);
+
+create table content(   --관련 유용한 정보 저장할 테이블
+no number not null, unique(no),
+writer varchar2(30) not null,
+title varchar2(100) not null,
+content varchar2(4000) not null,
+img_name varchar2(50),
+write_date date default sysdate,
+constraint content_writer_fk foreign key(writer) REFERENCES member(id)
+);
+
+create table content_comm( --글의 댓글 저장할 테이블
+no number primary key,  --댓글에 답글 구분용
+content_no number not null,
+id varchar2(30) not null,
+content varchar2(2000) not null,
+write_date date default sysdate,
+constraint content_comm_id_fk foreign key(id) REFERENCES member(id),
+constraint content_comm_no_fk foreign key(content_no) REFERENCES content(no)
+);
+
+create table cocklist_comm( --상세보기의 댓글 저장할 테이블
+no number primary key,  --댓글에 답글 구분용
+cocklist_no number not null,
+id varchar2(30) not null,
+content varchar2(2000) not null,
+write_date date default sysdate,
+constraint cocklist_comm_id_fk foreign key(id) REFERENCES member(id),
+constraint cocklist_comm_no_fk foreign key(cocklist_no) REFERENCES cocklist(no)
+);
+
+create table reply( --댓글의 답글 저장할 테이블
+comm_no number not null,
+id varchar2(30) not null,
+content varchar2(2000) not null,
+write_date date default sysdate,
+
+--------------테스트 데이터 추가
+insert into member values(                  --회원가입
+member_seq.nextval, '재현', 'testid', '1234', '함안군', '위스키'
+);
+insert into cocklist values(                --칵테일 리스트
+cocklist_seq.nextval, 'testImg1', 'orgasm', '소주', 
+'리큐어', 'shaking', '달면서 독한 맛', '작업주', '마실 때 기분이 오르가즘을 느끼는 것처럼 강렬하다고 해서 붙은 이름'
+);
+insert into member_mycock(id, name) values( --칵테일 리스트보고 마이페이지에 저장된 칵테일
+'testid', 'orgasm'
+);
+insert into content values(                 --칵테일,술 관련 정보 컨텐츠
+content_seq.nextval, 'testid', '칵테일 추천', '안녕하세요 오늘 추천 칵테일........', 'testimg.jpg', sysdate
+);
+insert into cocklist_comm values(                    --칵테일 리스트의 댓글
+cocklist_comm_seq.nextval, 5, 'testid', '오 추천 ㄳㄳ', sysdate
+);
+
+
+
+
+cocklist - name_e, tools, garnish, glass, material 칼럼 추가
+	check 조건 제거
+member_mycock - no칼럼 > cocklist_no로 변경
+content_comm, cocklist_comm 테이블 추가

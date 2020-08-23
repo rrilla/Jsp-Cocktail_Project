@@ -24,7 +24,7 @@ public class CockDao {
 			Connection conn = null;
 			PreparedStatement ps = null;
 			ResultSet rs = null;
-			String sql = "select * from cocklist order by no";
+			String sql = "select no,name,alike,base,technique,taste,img_name,fitting,tmi from cocklist";
 			try {
 				conn = DBconn.getConnection();
 				ps = conn.prepareStatement(sql);
@@ -55,7 +55,7 @@ public class CockDao {
 			Connection conn = null;
 			PreparedStatement ps = null;
 			ResultSet rs = null;
-			String sql = "select * from cocklist where no=?";
+			String sql = "select no,name,alike,base,technique,taste,img_name,fitting,tmi from cocklist where no=?";
 			try {
 				conn = DBconn.getConnection();
 				ps = conn.prepareStatement(sql);
@@ -114,7 +114,7 @@ public class CockDao {
 			Connection conn = null;
 			PreparedStatement ps = null;
 			ResultSet rs = null;
-			String sql = "select * from cocklist where name=?";
+			String sql = "select no,name,alike,base,technique,taste,img_name,fitting,tmi from cocklist where name=?";
 			try {
 				conn = DBconn.getConnection();
 				ps = conn.prepareStatement(sql);

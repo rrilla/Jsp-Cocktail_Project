@@ -2,27 +2,30 @@ package vo;
 
 import java.util.Date;
 
-public class Comm {
+public class CockListComm {
 	private int no;
+	private int cocklist_no;
 	private String id;
 	private String content;
 	private Date write_date;
 	
-	public Comm() {}
-
-	public Comm(int no, String id, String content, Date write_date) {
+	public CockListComm() {}
+	
+	public CockListComm(int no, int cocklist_no, String id, String content) {
 		super();
 		this.no = no;
+		this.cocklist_no = cocklist_no;
+		this.id = id;
+		this.content = content;
+	}
+
+	public CockListComm(int no, int cocklist_no, String id, String content, Date write_date) {
+		super();
+		this.no = no;
+		this.cocklist_no = cocklist_no;
 		this.id = id;
 		this.content = content;
 		this.write_date = write_date;
-	}
-
-	public Comm(int no, String id, String content) {
-		super();
-		this.no = no;
-		this.id = id;
-		this.content = content;
 	}
 
 	public int getNo() {
@@ -31,6 +34,14 @@ public class Comm {
 
 	public void setNo(int no) {
 		this.no = no;
+	}
+
+	public int getCocklist_no() {
+		return cocklist_no;
+	}
+
+	public void setCocklist_no(int cocklist_no) {
+		this.cocklist_no = cocklist_no;
 	}
 
 	public String getId() {
@@ -59,7 +70,8 @@ public class Comm {
 
 	@Override
 	public String toString() {
-		return "Comm [no=" + no + ", id=" + id + ", content=" + content + ", write_date=" + write_date + "]";
+		return "CockListComm [no=" + no + ", cocklist_no=" + cocklist_no + ", id=" + id + ", content=" + content
+				+ ", write_date=" + write_date + "]";
 	}
-	
+
 }

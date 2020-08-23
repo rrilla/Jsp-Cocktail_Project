@@ -16,9 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import dao.CockDao;
+import dao.ListCommDao;
 import dao.MemberDao;
 import dao.MyCockDao;
 import vo.CockList;
+import vo.CockListComm;
 import vo.Member;
 import vo.Member_MyCock;
 
@@ -92,6 +94,7 @@ public class BoardServlet extends HttpServlet {
 			int n = MemberDao.getInstance().overappedId(id);
 			writer.print(n);
 			
+		//회원가입 버튼 클릭시
 		}else if(action.equals("join.do")) {
 			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			String id=request.getParameter("id");
@@ -110,13 +113,15 @@ public class BoardServlet extends HttpServlet {
 				writer.print("<script>alert('회원가입 실패');location.href='p_join.do';</script>");
 			}
 			
+		//마이페이지 이동
 		}else if(action.equals("mypage.do")) {
 			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			String id = (String)request.getSession().getAttribute("session_id");
 			List<Member_MyCock> myList = MyCockDao.getInstance().selectAll(id);
 			request.setAttribute("myList", myList);
 			request.getRequestDispatcher("web/mypage.jsp").forward(request, response);
-			 
+			
+		//이름으로 검색버튼 클릭시
 		}else if(action.equals("search.do")) {
 			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			String cName = request.getParameter("cName");
@@ -125,6 +130,7 @@ public class BoardServlet extends HttpServlet {
 			request.setAttribute("nameResult", nameResult);
 			request.getRequestDispatcher("web/n_searchList.jsp").forward(request, response);
 			 
+		//모든 리스트 보기
 		}else if(action.equals("list.do")) {
 			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			CockDao cockDao=CockDao.getInstance();
@@ -132,15 +138,19 @@ public class BoardServlet extends HttpServlet {
 			request.setAttribute("list", list);
 			request.getRequestDispatcher("web/allList.jsp").forward(request, response);
 			
+		//상세보기 페이지 이동
 		}else if(action.equals("detail.do")) {
 			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			int no = Integer.parseInt(request.getParameter("no"));
 			CockList cock = CockDao.getInstance().SelectOne(no);
 			List<CockList> relevant = CockDao.getInstance().relevantCock(cock.getBase(), no);
+			List<CockListComm> listComm = ListCommDao.getInstance().selectAll(no);
+			request.setAttribute("listComm", listComm);
 			request.setAttribute("cock", cock);
 			request.setAttribute("relevant", relevant);
 			request.getRequestDispatcher("web/detail.jsp").forward(request, response);
 			
+		//즐겨찾기 추가	
 		}else if(action.equals("addmycock.do")) {
 			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			HttpSession session=request.getSession();
@@ -163,10 +173,22 @@ public class BoardServlet extends HttpServlet {
 				}
 			}writer.print(n);
 			
+		//댓글쓰기 버튼 클릭시	
+		}else if(action.equals("addComm.do")) {
+			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
+			String id = (String)request.getAttribute("id");
+			int no = Integer.parseInt((String)request.getAttribute("no"));
+			String content = (String)request.getAttribute("content");
+			System.out.println(id+"\n"+no+"\n"+content);
+			writer.print("1");
 			
 			
 			
-		//test 중
+			
+			
+			
+			
+			//test 중
 		}else if(action.equals("test.do")) {
 			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			System.out.println("testdo 실행");

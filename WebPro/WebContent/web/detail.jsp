@@ -8,6 +8,7 @@
             <p>상세보기</p>
             <h2>${cock.name }</h2>
             <input type="hidden" id="addMyCockNo" value="${cock.no }"/>
+            <input type="hidden" id="addMyCockNo" value="${cock.no }"/>
         </div>
     </section>
     <!-- ##### Breadcumb Area End ##### -->
@@ -121,20 +122,22 @@
                     <div class="row">
 
                         <!-- Single Service Area -->
-                        <div class="col-12 col-md-6">
-                            <div class="single-service-area d-flex flex-wrap mb-100">
-                                <div class="icon">
-                                    <span class="icon-favorites"></span>
-                                </div>
-                                <div class="text">
-                                    <h5>Member id</h5>
-                                    <p>Nam tristique ex vel magna tincidunt, ut porta nisl finibus. Vivamus eu dolor eu quam varius rutrum. Fusce nec justo id sem aliquam fringilla nec non lacus. Suspendisse eget lobortis nisi, ac cursus odio.</p>
-                                </div>
-                            </div>
-                        </div>
+                        <c:forEach items="${listComm }" var="comm">
+                        	<div class="col-12 col-md-6">
+                            	<div class="single-service-area d-flex flex-wrap mb-100">
+                                	<div class="icon">
+                                    	<span class="icon-favorites"></span>
+                                	</div>
+                                	<div class="text">
+                                    	<h5>${comm.id }</h5>
+                                    	<p>${comm.content }</p>
+                                	</div>
+                            	</div>
+                        	</div>
+                        </c:forEach>	
 
                         <!-- Single Service Area -->
-                        <div class="col-12 col-md-6">
+                        <!-- <div class="col-12 col-md-6">
                             <div class="single-service-area d-flex flex-wrap mb-100">
                                 <div class="icon">
                                     <span class="icon-microphone"></span>
@@ -144,7 +147,7 @@
                                     <p>Vivamus nibh velit, rutrum at ipsum ac, dignissim iaculis ante.Nam tristique ex vel magna tincidunt, ut porta nisl finibus. Vivamus eu dolor eu quam varius rutrum. Fusce nec justo id sem aliquam fringilla nec non lacus.</p>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
                     </div>
                 </div>
@@ -153,12 +156,12 @@
                     <div class="newsletter-area mb-100">
                         <div class="section-heading text-left mb-50">
                             <img src="img/member-img/bascMember.jpg" alt="" />
-                            <h2>Member id</h2>
+                            <h2 id="session_id">${session_id }</h2>
                         </div>
                         <div class="newsletter-form">
                             <form action="#">
-                                <input type="search" name="search" id="newsletterSearch" placeholder="comment">
-                                <button type="submit" class="btn oneMusic-btn">댓글 쓰기 <i class="fa fa-angle-double-right"></i></button>
+                                <input type="search" name="content" id="content" placeholder="comment">
+                                <button type="button" id="addComm" class="btn oneMusic-btn">댓글 쓰기 <i class="fa fa-angle-double-right"></i></button>
                             </form>
                         </div>
                     </div>
@@ -268,6 +271,28 @@ $("#addMyCocktail").on('click', function(){
 		}, complete:function(data,textStatus){}
 	});
 });
+
+$("#addComm").on('click',function(){
+	/* var query={"id":$("#session_id").val(), "no":$("#addMyCockNo").val(), "content":$("#content").val()}; */
+		$.ajax({
+			type:"post",
+			url:"addComm.do",
+			async:false, 
+			data:{"id":$("#session_id").val(), "no":$("#addMyCockNo").val(), "content":$("#content").val()},
+			dataType:"text",
+			success:function(data,textStatus){
+				if(data==1){
+					alert("success");
+				}else if(data==0){
+					alert("password error")
+				}else{
+					alert("id error")
+				}
+			},error:function(data,textStatus){
+				alert("error")
+			}
+		});
+	});
 	
 </script>
 
