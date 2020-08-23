@@ -112,4 +112,13 @@ public class CockList {
 		this.tmi = tmi;
 	}
 
+	@Override
+	public String toString() {
+		return "CockList [no=" + no + ", img_name=" + img_name + ", name=" + name + ", alike=" + alike + ", base="
+				+ base + ", technique=" + technique + ", taste=" + taste + ", fitting=" + fitting + ", tmi=" + tmi
+				+ "]";
+	}
+	
+	
+
 }

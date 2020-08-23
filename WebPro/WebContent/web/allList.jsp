@@ -55,13 +55,14 @@
                 <c:forEach items="${list }" var="cocktail">
                 	<div class="col-12 col-sm-4 col-md-3 col-lg-2 single-album-item t c p">
                     	<div class="single-album">
-                        	<img src="img/cock-img/${cocktail.img_name }" alt="">
-                        	<div class="album-info">
-                            	<a href="#">
+                    		<a href="detail.do?no=${cocktail.no }">
+                        		<img src="img/cock-img/${cocktail.img_name }" alt="">
+                        		<div class="album-info">
                                 	<h5>${cocktail.name }</h5>
-                            	</a>
-                            	<p>${cocktail.base }</p>
-                        	</div>
+                            	
+                            		<p>${cocktail.base }</p>
+                        		</div>
+                        	</a>
                     	</div>
                 	</div>
                 </c:forEach>

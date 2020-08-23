@@ -20,17 +20,18 @@
                 <c:forEach items="${nameResult }" var="cocktail">
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="single-event-area mb-30">
+                    	<a href="detail.do?no=${cocktail.no }">
                         <div class="event-thumbnail">
                             <img src="img/cock-img/${cocktail.img_name }" alt="">
                         </div>
                         <div class="event-text">
                             <h4>${cocktail.name }</h4>
                             <div class="event-meta-data">
-                                <a href="#" class="event-place">${cocktail.base }</a>
-                                <a href="#" class="event-date">${cocktail.alike }</a>
+                                <p  class="event-place">${cocktail.base }</p>
+                                <p  class="event-date">${cocktail.alike }</p>
                             </div>
-                            <a href="#" class="btn see-more-btn">상세보기</a>
                         </div>
+                        </a>
                     </div>
                 </div>
                 </c:forEach>

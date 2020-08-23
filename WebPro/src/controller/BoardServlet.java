@@ -27,6 +27,7 @@ public class BoardServlet extends HttpServlet {
 	String[] data;
 	
 	public void init(ServletConfig config) throws ServletException {
+		//서버 실행시 한번만 실행, 저장된 칵테일 리스트에서 이름가져와 배열로 저장
 		List<String> list = CockDao.getInstance().rName();
 		data = list.toArray(new String[list.size()]);
 	}
@@ -129,6 +130,11 @@ public class BoardServlet extends HttpServlet {
 			
 		}else if(action.equals("detail.do")) {
 			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
+			int no = Integer.parseInt(request.getParameter("no"));
+			CockList cock = CockDao.getInstance().SelectOne(no);
+			List<CockList> relevant = CockDao.getInstance().relevantCock(cock.getBase(), no);
+			request.setAttribute("cock", cock);
+			request.setAttribute("relevant", relevant);
 			request.getRequestDispatcher("web/detail.jsp").forward(request, response);
 			
 		}else if(action.equals("test.do")) {

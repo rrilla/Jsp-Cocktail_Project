@@ -41,7 +41,7 @@
     </section>
     <!-- ##### Login Area End ##### -->
     
-<script type="text/javascript">    
+<script type="text/javascript">
 
 //로그인
     $("#btnLogin").on('click',function(){
