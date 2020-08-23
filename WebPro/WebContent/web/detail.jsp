@@ -7,6 +7,7 @@
         <div class="bradcumbContent">
             <p>상세보기</p>
             <h2>${cock.name }</h2>
+            <input type="hidden" id="addMyCockNo" value="${cock.no }"/>
         </div>
     </section>
     <!-- ##### Breadcumb Area End ##### -->
@@ -35,7 +36,7 @@
                             <!-- Post Date -->
                             <div class="post-date">	
                                 <span> </span>
-                                <span id="addMyCocktail">즐겨찾기아이콘</span>
+                                <span id="addMyCocktail">mycock추가</span>
                             </div>
                         </div>
 
@@ -249,18 +250,18 @@
 $("#addMyCocktail").on('click', function(){
 	$.ajax({
 		type:"post",
-		url:"overappedId.do",
-		data:{"id":$("#id").val()},
+		url:"addmycock.do",
+		data:{"no":$("#addMyCockNo").val()},
 		async:false,
 		dataType:"text",
 		success:function(data,textStatus){
 			if(data == '0'){
-				$("#msg").html("사용 가능한 아이디");
-				alert("사용 가능한 아이디");
+				alert("추가 완료");
 			}
 			else if(data == '1'){
-				$("#msg").html("사용 불가능한 아이디");
-				alert("사용 불가능한 아이디");
+				alert("삭제 완료");
+			}else if(data == '-1'){
+				alert("로그인 후 가능합니다.");
 			}
 		}, error:function(data,textStatus){
 			alert("error")

@@ -72,7 +72,6 @@ public class MemberDao {
 		} finally {
 			DBconn.close(conn, ps, rs);
 		}
-		
 		return member;
 	}
 	
@@ -94,13 +93,11 @@ public class MemberDao {
 			if(n == 1) {
 				flag = true;
 			}
-
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
 			DBconn.close(conn, ps, rs);
 		}
-		
 		return flag;
 	}
 	
@@ -144,17 +141,14 @@ public class MemberDao {
 			ps.setString(1, id);
 			rs = ps.executeQuery();
 			if(rs.next()) {
-				if(pw.equals(rs.getNString(1))) {
+				if(pw.equals(rs.getString(1))) {
 					n=1;
-					System.out.println("LOGIN SUCCESS");
 				}
 				else {
 					n=0;
-					System.out.println("INCORRECT PASSWORD");
 				}
 			}
 			else {
-				System.out.println("NOT EXIST ID");
 			}
 
 		} catch (Exception ex) {
@@ -162,7 +156,6 @@ public class MemberDao {
 		} finally {
 			DBconn.close(conn, ps, rs);
 		}
-		
 		return n;
 	}
 	
@@ -182,13 +175,11 @@ public class MemberDao {
 			if(n == 1) {
 				flag = true;
 			}
-
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
 			DBconn.close(conn, ps);
 		}
-		
 		return flag;
 	}
 	
@@ -206,13 +197,11 @@ public class MemberDao {
 			if(n == 1) {
 				flag = true;
 			}
-
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
 			DBconn.close(conn, ps, rs);
 		}
-		
 		return flag;
 	}
 }

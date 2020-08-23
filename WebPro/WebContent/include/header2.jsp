@@ -166,12 +166,3 @@
             </div>
         </div>
     </header>
-    
-<script type="text/javascript">
-
-	/* $("#searchBtn").on('click',function(){
-		var cName = {"cName":$("#cockName").val()};
-		location.href="search.do?cName='cName'";
-	}); */
-	
-</script>
