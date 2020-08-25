@@ -46,4 +46,28 @@ public class ListCommDao {
 		return list;
 	}
 	
+	public boolean insertComm(CockListComm cockListComm){
+		boolean flag = false;
+		Connection conn = null;
+		PreparedStatement ps = null;
+		String sql="insert into cocklist_comm(no, cocklist_no, id, content) "
+				+ "values(cocklist_comm_seq.nextval,?,?,?)";
+		try{
+			conn = DBconn.getConnection();
+			ps=conn.prepareStatement(sql);
+			ps.setInt(1, cockListComm.getCocklist_no());
+			ps.setString(2,cockListComm.getId());
+			ps.setString(3, cockListComm.getContent());
+			int n=ps.executeUpdate();
+			if(n==1) {
+				flag=true;
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			DBconn.close(conn,ps);
+		}
+		return flag;
+	}
+	
 }

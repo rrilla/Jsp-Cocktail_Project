@@ -2,18 +2,27 @@ package controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URLEncoder;
 import java.util.List;
-import java.util.Random;
+import java.util.Properties;
 
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeUtility;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import com.google.gson.Gson;
 
 import dao.CockDao;
 import dao.ListCommDao;
@@ -31,7 +40,7 @@ public class BoardServlet extends HttpServlet {
 	private String[] data;
 	
 	public void init(ServletConfig config) throws ServletException {
-		//¼­¹ö ½ÇÇà½Ã ÇÑ¹ø¸¸ ½ÇÇà, ÀúÀåµÈ Ä¬Å×ÀÏ ¸®½ºÆ®¿¡¼­ ÀÌ¸§°¡Á®¿Í ¹è¿­·Î ÀúÀå
+		//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ Ä¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½è¿­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		List<String> list = CockDao.getInstance().rName();
 		data = list.toArray(new String[list.size()]);
 	}
@@ -45,24 +54,12 @@ public class BoardServlet extends HttpServlet {
 		String action = requestURI.substring(contextPath.length()+1);
 		
 		if(action.equals("p_main.do")) {
-			String rName = data[(int)(Math.random()*data.length)];
-			request.setAttribute("rName", rName);
 			request.getRequestDispatcher("web/main.jsp").forward(request, response);
 			
-		} /*
-			 * else if(action.equals("start.do")) { Cookie c = new Cookie("cNameList",
-			 * URLEncoder.encode(cNameList, "utf-8")); c.setComment("ÀÌ¸§ °Ë»ö¿ë Ä¬Å×ÀÏ");
-			 * response.addCookie(c);
-			 * 
-			 * request.getRequestDispatcher("web/main.jsp").forward(request, response);
-			 * 
-			 * }
-			 */else if(action.equals("p_login.do")) {
-			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
+		}else if(action.equals("p_login.do")) {
 			request.getRequestDispatcher("web/login.jsp").forward(request, response);
 			
 		}else if(action.equals("p_join.do")) {
-			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			request.getRequestDispatcher("web/join.jsp").forward(request, response);
 			
 		}else if(action.equals("p_tasteSearch.do")) {
@@ -70,77 +67,77 @@ public class BoardServlet extends HttpServlet {
 			request.getRequestDispatcher("web/tasteSearch.jsp").forward(request, response);
 			
 		}else if(action.equals("login.do")) {
-			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			String id=request.getParameter("id");
 			String pw=request.getParameter("pw");
 			int n=MemberDao.getInstance().login(id,pw);
 			writer.print(n);
 			if(n==1) {
-				System.out.println(id + " ´ÔÀÌ ·Î±×ÀÎ ÇÏ½É.");
+				System.out.println(id + " ï¿½ï¿½ï¿½ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ ï¿½Ï½ï¿½.");
 				HttpSession session=request.getSession();
 				session.setAttribute("session_id", id);
 			}
 			
 		}else if(action.equals("logout.do")) {
-			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			HttpSession session=request.getSession();
-			System.out.println(session.getAttribute("session_id") + " ´ÔÀÌ ·Î±×¾Æ¿ô ÇÏ½É.");
+			System.out.println(session.getAttribute("session_id") + " ï¿½ï¿½ï¿½ï¿½ ï¿½Î±×¾Æ¿ï¿½ ï¿½Ï½ï¿½.");
 			session.removeAttribute("session_id");
 			request.getRequestDispatcher("p_main.do").forward(request, response);
 			
 		}else if(action.equals("overappedId.do")) {
-			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			String id=request.getParameter("id");
 			int n = MemberDao.getInstance().overappedId(id);
 			writer.print(n);
 			
-		//È¸¿ø°¡ÀÔ ¹öÆ° Å¬¸¯½Ã
+		//È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ° Å¬ï¿½ï¿½ï¿½ï¿½
+		}else if(action.equals("eamilCheck.do")) {
+			String email = request.getParameter("email");
+			String authNum = "";
+			authNum = RandomNum();
+			
+			sendEmail(email, authNum);
+			
+		//È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ° Å¬ï¿½ï¿½ï¿½ï¿½
 		}else if(action.equals("join.do")) {
-			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
-			String id=request.getParameter("id");
+			String email=request.getParameter("email");
 			String name=request.getParameter("name");
 			String pw=request.getParameter("pw");
 			String address = request.getParameter("area1") + 
 					  ", " + request.getParameter("area2");
 			String one_s = request.getParameter("one_s");
-			boolean flag = MemberDao.getInstance().insert(new Member(id,pw,name,address,one_s));
+			boolean flag = MemberDao.getInstance().insert(new Member(email,pw,name,address,one_s));
 			if(flag) {
 				HttpSession session = request.getSession();
-				session.setAttribute("session_id", id);
-				System.out.println(id + "´ÔÀÌ È¸¿ø°¡ÀÔ ÇÏ½É.");
-				writer.print("<script>alert('È¸¿ø°¡ÀÔ ¼º°ø');location.href='p_main.do';</script>");
+				session.setAttribute("session_id", email);
+				System.out.println(email + "ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï½ï¿½.");
+				writer.print("<script>alert('È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½');location.href='p_main.do';</script>");
 			}else {
-				writer.print("<script>alert('È¸¿ø°¡ÀÔ ½ÇÆĞ');location.href='p_join.do';</script>");
+				writer.print("<script>alert('È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½');location.href='p_join.do';</script>");
 			}
 			
-		//¸¶ÀÌÆäÀÌÁö ÀÌµ¿
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
 		}else if(action.equals("mypage.do")) {
-			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			String id = (String)request.getSession().getAttribute("session_id");
 			List<Member_MyCock> myList = MyCockDao.getInstance().selectAll(id);
 			request.setAttribute("myList", myList);
 			request.getRequestDispatcher("web/mypage.jsp").forward(request, response);
 			
-		//ÀÌ¸§À¸·Î °Ë»ö¹öÆ° Å¬¸¯½Ã
+		//ï¿½Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½ï¿½ï¿½Æ° Å¬ï¿½ï¿½ï¿½ï¿½
 		}else if(action.equals("search.do")) {
-			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			String cName = request.getParameter("cName");
 			List<CockList> nameResult = CockDao.getInstance().searchName(cName);
 			request.setAttribute("cName", cName);
 			request.setAttribute("nameResult", nameResult);
 			request.getRequestDispatcher("web/n_searchList.jsp").forward(request, response);
 			 
-		//¸ğµç ¸®½ºÆ® º¸±â
+		//ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 		}else if(action.equals("list.do")) {
-			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			CockDao cockDao=CockDao.getInstance();
 			List<CockList> list=cockDao.selectAll();
 			request.setAttribute("list", list);
 			request.getRequestDispatcher("web/allList.jsp").forward(request, response);
 			
-		//»ó¼¼º¸±â ÆäÀÌÁö ÀÌµ¿
+		//ï¿½ó¼¼ºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
 		}else if(action.equals("detail.do")) {
-			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			int no = Integer.parseInt(request.getParameter("no"));
 			CockList cock = CockDao.getInstance().SelectOne(no);
 			List<CockList> relevant = CockDao.getInstance().relevantCock(cock.getBase(), no);
@@ -150,16 +147,15 @@ public class BoardServlet extends HttpServlet {
 			request.setAttribute("relevant", relevant);
 			request.getRequestDispatcher("web/detail.jsp").forward(request, response);
 			
-		//Áñ°ÜÃ£±â Ãß°¡	
+		//ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ ï¿½ß°ï¿½	
 		}else if(action.equals("addmycock.do")) {
-			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			HttpSession session=request.getSession();
 			int n = -1;
 			int no = Integer.parseInt(request.getParameter("no"));
 			String id = null;
 			id = (String)session.getAttribute("session_id");
-			if(id!=null) {
-				boolean flag = MyCockDao.getInstance().checkAdd(id, no);	//ÀÌ¹Ì ÀúÀåµÇ ÀÖ´ÂÁö È®ÀÎ
+			if(id != null) {
+				boolean flag = MyCockDao.getInstance().checkAdd(id, no);	//ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 				if(!flag) {
 					boolean add = MyCockDao.getInstance().addMyCock(id, no);
 					if(add) {
@@ -171,34 +167,113 @@ public class BoardServlet extends HttpServlet {
 						n = 1;
 					}
 				}
-			}writer.print(n);
+			}
+			writer.print(n);
 			
-		//´ñ±Û¾²±â ¹öÆ° Å¬¸¯½Ã	
+		//ï¿½ï¿½Û¾ï¿½ï¿½ï¿½ ï¿½ï¿½Æ° Å¬ï¿½ï¿½ï¿½ï¿½	
 		}else if(action.equals("addComm.do")) {
-			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
-			String id = (String)request.getAttribute("id");
-			int no = Integer.parseInt((String)request.getAttribute("no"));
-			String content = (String)request.getAttribute("content");
-			System.out.println(id+"\n"+no+"\n"+content);
-			writer.print("1");
+			int n = 0;
+			String id = null;
+			id = request.getParameter("id");
+			String content = request.getParameter("content");
+			int no = Integer.parseInt(request.getParameter("no"));
+			CockListComm cockListComm = new CockListComm(no,id,content);
+			boolean flag = ListCommDao.getInstance().insertComm(cockListComm);
+			if(flag) {
+//				List<CockListComm> listComm = ListCommDao.getInstance().selectAll(no);
+//				Gson gson = new Gson();
+//				String strJson = "";
+//				strJson = gson.toJson(listComm);
+//				response.setContentType("application/json; charset=UTF-8");
+//				writer.print(strJson);
+//				writer.close();
+				n=1;
+			}
+			writer.print(n);
+			
+			
+		}else if(action.equals("rName.do")) {
+			writer.print(data[(int)(Math.random()*data.length)]);
+		
 			
 			
 			
 			
 			
 			
-			
-			//test Áß
+			//test ï¿½ï¿½
 		}else if(action.equals("test.do")) {
-			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
-			System.out.println("testdo ½ÇÇà");
+			System.out.println("testdo ï¿½ï¿½ï¿½ï¿½");
 			
 		}else if(action.equals("test2.do")) {
-			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
 			request.getRequestDispatcher("web/search.jsp").forward(request, response);
 		}
 			
 	}
+    
+    private void sendEmail(String email, String authNum) {
+    	String host = "smtp.gmail.com";
+    	String subject = "JaeHyeon`s Web ì¸ì¦ë²ˆí˜¸";	//ì œëª©
+    	String fromName = "JaeHyeon`s Web ê´€ë¦¬ì";	//ë³´ë‚¸ì‚¬ëŒ ì´ë¦„
+    	String from = "rrilla01@gmail.com";			//ë³´ë‚¸ì‚¬ëŒ ë©”ì¼
+    	String to1 = email;
+    	
+    	String content = "ì¬í˜„ì´ê°€ ë§Œë“  ì›¹ì‚¬ì´íŠ¸ì—ì„œ ì¬í˜„ì´ê°€ ìš”ì²­í•´ì„œ ì¬í˜„ì´ê°€ ë³´ë‚¸ ì¬í˜„ì´ê°€ ì…ë ¥í•´ì•¼ í•  ì¬í˜„ì´ë¥¼ ìœ„í•œ ì¸ì¦ë²ˆí˜¸ëŠ”<br><h3>[" + authNum + "]</h3><br>ì…ë‹ˆë‹¤.";
+    	
+    	try {
+    		Properties props = new Properties();
+    		
+//    		props.put("mail.smtp.starttls.enable", "true");
+//    		props.put("mail.transport.protocol", "smtp");
+//    		props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+//    		props.put("mail.smtp.port", "465");
+//    		props.put("mail.smtp.user", from);
+//    		props.put("mail.smtp.auth", "true");
+    		props.put("mail.smtp.host","gmail-smtp.l.google.com"); // ë„¤ì´ë²„ SMTP
+    		
+    		props.put("mail.smtp.port", "465");
+    		props.put("mail.smtp.starttls.enable", "true");
+    		props.put("mail.smtp.auth", "true");
+    		props.put("mail.smtp.debug", "true");
+    		props.put("mail.smtp.socketFactory.port", "465");
+    		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+    		props.put("mail.smtp.socketFactory.fallback", "false");
+    		
+
+    		Session session_mail = Session.getInstance(props,
+    				new javax.mail.Authenticator() {
+    			protected PasswordAuthentication getPasswordAuthentication() {
+    				return new PasswordAuthentication("rrilla01@gmail.com", "zz529587!");
+    			}
+    		});
+    		//session_mail.setDebug(true);	//ë””ë²„ê·¸
+    		MimeMessage msg = new MimeMessage(session_mail);
+    		msg.setFrom(new InternetAddress(from, MimeUtility.encodeText(fromName, "UTF-8", "B")));	//ë³´ë‚´ëŠ” ì‚¬ëŒ ì„¤ì •
+    		
+    		Address address1 = new InternetAddress(to1);
+    		msg.addRecipient(Message.RecipientType.TO, address1);
+    		msg.setSubject(subject);
+    		msg.setSentDate(new java.util.Date());
+    		msg.setContent(content, "text/html;charset=utf-8");
+    		
+    		Transport.send(msg);
+    		System.out.println("ì¸ì¦ë²ˆí˜¸ ì „ì†¡");
+    	}catch(MessagingException e) {
+    		System.out.println("catchì˜¤ë¥˜");
+    		e.printStackTrace();
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    }
+    
+    public String RandomNum() {
+    	StringBuffer buffer = new StringBuffer();
+    	for(int i = 0; i <= 6; i++) {
+    		int n=(int)(Math.random()*10);
+    		buffer.append(n);
+    	}
+    	return buffer.toString();
+    }
     
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//response.getWriter().append("Served at: ").append(request.getContextPath());

@@ -99,7 +99,7 @@
     </div>
 
     <!-- ##### Header Area Start ##### -->
-    <header class="header-area">
+    <header class="header-area" style="top: 0px;">
         <!-- Navbar Area -->
         <div class="oneMusic-main-menu">
             <div class="classy-nav-container breakpoint-off" style="background: #000000;">
@@ -165,4 +165,23 @@
                 </div>
             </div>
         </div>
+        
+		<script type="text/javascript">
+		
+			$(function(){
+				 $.ajax({
+			         url: "rName.do",
+			         type: "post",
+			         success: function(data){
+			        	 $('input[name=cName]').attr('value',data);
+			         },
+			         error: function(){
+			             alert("rName error");
+			         }
+			     });
+			});
+		
+		
+		</script>       
+        
     </header>

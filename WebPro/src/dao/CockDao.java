@@ -78,7 +78,6 @@ public class CockDao {
 			} finally {
 				DBconn.close(conn, ps, rs);
 			}
-			
 			return cock;
 		}
 		
@@ -114,11 +113,11 @@ public class CockDao {
 			Connection conn = null;
 			PreparedStatement ps = null;
 			ResultSet rs = null;
-			String sql = "select no,name,alike,base,technique,taste,img_name,fitting,tmi from cocklist where name=?";
+			String sql = "select no,name,alike,base,technique,taste,img_name,fitting,tmi from cocklist where name like ?";
 			try {
 				conn = DBconn.getConnection();
 				ps = conn.prepareStatement(sql);
-				ps.setString(1, cName);
+				ps.setString(1, "%"+cName+"%");
 				rs = ps.executeQuery();
 				while(rs.next()) {
 					CockList cock = new CockList();

@@ -67,7 +67,7 @@ input[type=range] {
 						<div class="col-4"></div>
 						<div class="col-md-6">
 							<div class="form-group wow fadeInUp" data-wow-delay="100ms">
-								<input type="text" class="form-control" name="id" id="id" placeholder="ID">
+								<input type="email" class="form-control" name="email" id="email" placeholder="ID">
 							</div>
 						</div>
 					</div>
@@ -76,6 +76,16 @@ input[type=range] {
 						<div class="col-md-2" id="msg"></div>
 						<div class="col-md-2">
 							<button type="button" id="btnOverrappedId" class="btn">중복확인</button>
+							<button type="button" id="btnEmailCheck" class="btn">이메일 인증</button>
+						</div>
+					</div>
+					<div class="row mb-30">
+						<div class="col-4"></div>
+						<div class="col-md-6">
+							<div class="form-group wow fadeInUp" data-wow-delay="100ms">
+								<input type="text" class="form-control" name="checkMail" id="checkMail"
+									placeholder="인증번호">
+							</div>
 						</div>
 					</div>
 					<div class="row mb-30">
@@ -113,7 +123,7 @@ input[type=range] {
 				<div class="contact-form-area">
 					<div class="row mb-50">
 						<div class="col-4"></div>
-						<h5>선택 입력</h5>
+						<h5></h5>
 					</div>
 					<div class="row">
 						<div class="col-2"></div>
@@ -187,6 +197,28 @@ input[type=range] {
 </form>
 
 <script type="text/javascript">
+
+	$("#btnEmailCheck").on('click', function(){
+		$.ajax({
+			type:"post",
+			url:"eamilCheck.do",
+			data:{"email":$("#email").val()},
+			async:false,
+			dataType:"text",
+			success:function(data,textStatus){
+				if(data == '0'){
+					$("#msg").html("사용 가능한 아이디");
+					alert("사용 가능한 아이디");
+				}
+				else if(data == '1'){
+					$("#msg").html("사용 불가능한 아이디");
+					alert("사용 불가능한 아이디");
+				}
+			}, error:function(data,textStatus){
+				alert("error")
+			}, complete:function(data,textStatus){}
+		});
+	});
 
 //id중복 검사 & id미입력 검사
 	$("#btnOverrappedId").on('click', function(){
