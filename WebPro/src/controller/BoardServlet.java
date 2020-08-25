@@ -38,9 +38,11 @@ public class BoardServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final String FILE_REPO = "E:\\src\\jsp_pro\\BoardProject\\WebContent\\image\\temp";
 	private String[] data;
+	private boolean mailAdressCheck = true;
+	private String authNum;
 	
 	public void init(ServletConfig config) throws ServletException {
-		//���� ����� �ѹ��� ����, ����� Ĭ���� ����Ʈ���� �̸������� �迭�� ����
+		//서버 실행시 한번만 실행, 저장된 칵테일 리스트에서 이름가져와 배열로 저장
 		List<String> list = CockDao.getInstance().rName();
 		data = list.toArray(new String[list.size()]);
 	}
@@ -72,31 +74,47 @@ public class BoardServlet extends HttpServlet {
 			int n=MemberDao.getInstance().login(id,pw);
 			writer.print(n);
 			if(n==1) {
-				System.out.println(id + " ���� �α��� �Ͻ�.");
+				System.out.println(id + " 님이 로그인 하심.");
 				HttpSession session=request.getSession();
 				session.setAttribute("session_id", id);
 			}
 			
 		}else if(action.equals("logout.do")) {
 			HttpSession session=request.getSession();
-			System.out.println(session.getAttribute("session_id") + " ���� �α׾ƿ� �Ͻ�.");
+			System.out.println(session.getAttribute("session_id") + " 님이 로그아웃 하심.");
 			session.removeAttribute("session_id");
 			request.getRequestDispatcher("p_main.do").forward(request, response);
-			
+		
+		//아이디(이메일) 중복확인 클릭시
 		}else if(action.equals("overappedId.do")) {
-			String id=request.getParameter("id");
+			String id = request.getParameter("id");
 			int n = MemberDao.getInstance().overappedId(id);
 			writer.print(n);
 			
-		//ȸ������ ��ư Ŭ����
-		}else if(action.equals("eamilCheck.do")) {
+		//인증번호 발송 클릭시
+		}else if(action.equals("authNumSend.do")) {
 			String email = request.getParameter("email");
-			String authNum = "";
 			authNum = RandomNum();
-			
 			sendEmail(email, authNum);
+			if(mailAdressCheck) {
+				//writer.print("1");
+				writer.print(authNum);
+				request.setAttribute("authNum", authNum);
+				System.out.println("'" + email + "' 으로 인증메일 전송함.");
+			}else {
+				writer.print("0");
+			}
 			
-		//ȸ������ ��ư Ŭ����
+		//인증번호 확인 클릭시
+		}else if(action.equals("authNumCheck.do")) {
+			String inputAuthNum = request.getParameter("authNum");
+			if(inputAuthNum.equals(authNum)) {
+				writer.print('1');
+			}else {
+				writer.print('0');
+			}
+		
+		//회원가입 버튼 클릭시
 		}else if(action.equals("join.do")) {
 			String email=request.getParameter("email");
 			String name=request.getParameter("name");
@@ -108,20 +126,20 @@ public class BoardServlet extends HttpServlet {
 			if(flag) {
 				HttpSession session = request.getSession();
 				session.setAttribute("session_id", email);
-				System.out.println(email + "���� ȸ������ �Ͻ�.");
-				writer.print("<script>alert('ȸ������ ����');location.href='p_main.do';</script>");
+				System.out.println(email + "님이 회원가입 하심.");
+				writer.print("<script>alert('회원가입 성공');location.href='p_main.do';</script>");
 			}else {
-				writer.print("<script>alert('ȸ������ ����');location.href='p_join.do';</script>");
+				writer.print("<script>alert('회원가입 실패');location.href='p_join.do';</script>");
 			}
 			
-		//���������� �̵�
+		//마이페이지 이동
 		}else if(action.equals("mypage.do")) {
 			String id = (String)request.getSession().getAttribute("session_id");
 			List<Member_MyCock> myList = MyCockDao.getInstance().selectAll(id);
 			request.setAttribute("myList", myList);
 			request.getRequestDispatcher("web/mypage.jsp").forward(request, response);
 			
-		//�̸����� �˻���ư Ŭ����
+		//이름으로 검색버튼 클릭시
 		}else if(action.equals("search.do")) {
 			String cName = request.getParameter("cName");
 			List<CockList> nameResult = CockDao.getInstance().searchName(cName);
@@ -129,14 +147,14 @@ public class BoardServlet extends HttpServlet {
 			request.setAttribute("nameResult", nameResult);
 			request.getRequestDispatcher("web/n_searchList.jsp").forward(request, response);
 			 
-		//��� ����Ʈ ����
+		//모든 리스트 보기
 		}else if(action.equals("list.do")) {
 			CockDao cockDao=CockDao.getInstance();
 			List<CockList> list=cockDao.selectAll();
 			request.setAttribute("list", list);
 			request.getRequestDispatcher("web/allList.jsp").forward(request, response);
 			
-		//�󼼺��� ������ �̵�
+		//상세보기 페이지 이동
 		}else if(action.equals("detail.do")) {
 			int no = Integer.parseInt(request.getParameter("no"));
 			CockList cock = CockDao.getInstance().SelectOne(no);
@@ -147,7 +165,7 @@ public class BoardServlet extends HttpServlet {
 			request.setAttribute("relevant", relevant);
 			request.getRequestDispatcher("web/detail.jsp").forward(request, response);
 			
-		//���ã�� �߰�	
+		//즐겨찾기 추가
 		}else if(action.equals("addmycock.do")) {
 			HttpSession session=request.getSession();
 			int n = -1;
@@ -155,7 +173,7 @@ public class BoardServlet extends HttpServlet {
 			String id = null;
 			id = (String)session.getAttribute("session_id");
 			if(id != null) {
-				boolean flag = MyCockDao.getInstance().checkAdd(id, no);	//�̹� ����� �ִ��� Ȯ��
+				boolean flag = MyCockDao.getInstance().checkAdd(id, no);	//占싱뱄옙 占쏙옙占쏙옙占� 占쌍댐옙占쏙옙 확占쏙옙
 				if(!flag) {
 					boolean add = MyCockDao.getInstance().addMyCock(id, no);
 					if(add) {
@@ -170,9 +188,8 @@ public class BoardServlet extends HttpServlet {
 			}
 			writer.print(n);
 			
-		//��۾��� ��ư Ŭ����	
+		//댓글쓰기 버튼 클릭시
 		}else if(action.equals("addComm.do")) {
-			int n = 0;
 			String id = null;
 			id = request.getParameter("id");
 			String content = request.getParameter("content");
@@ -180,16 +197,15 @@ public class BoardServlet extends HttpServlet {
 			CockListComm cockListComm = new CockListComm(no,id,content);
 			boolean flag = ListCommDao.getInstance().insertComm(cockListComm);
 			if(flag) {
-//				List<CockListComm> listComm = ListCommDao.getInstance().selectAll(no);
-//				Gson gson = new Gson();
-//				String strJson = "";
-//				strJson = gson.toJson(listComm);
-//				response.setContentType("application/json; charset=UTF-8");
-//				writer.print(strJson);
-//				writer.close();
-				n=1;
+				List<CockListComm> listComm = ListCommDao.getInstance().selectAll(no);
+				Gson gson = new Gson();
+				String strJson = "";
+				strJson = gson.toJson(listComm);
+				response.setContentType("application/json; charset=UTF-8");
+				writer.print(strJson);
+				writer.close();
 			}
-			writer.print(n);
+			
 			
 			
 		}else if(action.equals("rName.do")) {
@@ -201,9 +217,9 @@ public class BoardServlet extends HttpServlet {
 			
 			
 			
-			//test ��
+			//test 중
 		}else if(action.equals("test.do")) {
-			System.out.println("testdo ����");
+			System.out.println("testdo 실행");
 			
 		}else if(action.equals("test2.do")) {
 			request.getRequestDispatcher("web/search.jsp").forward(request, response);
@@ -213,12 +229,12 @@ public class BoardServlet extends HttpServlet {
     
     private void sendEmail(String email, String authNum) {
     	String host = "smtp.gmail.com";
-    	String subject = "JaeHyeon`s Web 인증번호";	//제목
-    	String fromName = "JaeHyeon`s Web 관리자";	//보낸사람 이름
-    	String from = "rrilla01@gmail.com";			//보낸사람 메일
+    	String subject = "JaeHyeon`s Web 인증번호 ";	//�젣紐�
+    	String fromName = "JaeHyeon`s Web 관리자";	//蹂대궦�궗�엺 �씠由�
+    	String from = "rrilla01@gmail.com";			//蹂대궦�궗�엺 硫붿씪
     	String to1 = email;
     	
-    	String content = "재현이가 만든 웹사이트에서 재현이가 요청해서 재현이가 보낸 재현이가 입력해야 할 재현이를 위한 인증번호는<br><h3>[" + authNum + "]</h3><br>입니다.";
+    	String content = "재현이가 만든 웹사이트에<br>재현이가 요청해서<br>재현이가 보낸<br>재현이가 입력해야 할<br>재현이를 위한 인증번호는<br><h1>[" + authNum + "]</h1><br>입니다.";
     	
     	try {
     		Properties props = new Properties();
@@ -229,7 +245,7 @@ public class BoardServlet extends HttpServlet {
 //    		props.put("mail.smtp.port", "465");
 //    		props.put("mail.smtp.user", from);
 //    		props.put("mail.smtp.auth", "true");
-    		props.put("mail.smtp.host","gmail-smtp.l.google.com"); // 네이버 SMTP
+    		props.put("mail.smtp.host","gmail-smtp.l.google.com"); // �꽕�씠踰� SMTP
     		
     		props.put("mail.smtp.port", "465");
     		props.put("mail.smtp.starttls.enable", "true");
@@ -241,14 +257,14 @@ public class BoardServlet extends HttpServlet {
     		
 
     		Session session_mail = Session.getInstance(props,
-    				new javax.mail.Authenticator() {
-    			protected PasswordAuthentication getPasswordAuthentication() {
-    				return new PasswordAuthentication("rrilla01@gmail.com", "zz529587!");
-    			}
-    		});
-    		//session_mail.setDebug(true);	//디버그
+    			new javax.mail.Authenticator() {
+    				protected PasswordAuthentication getPasswordAuthentication() {
+    					return new PasswordAuthentication("rrilla01@gmail.com", "jh940520");
+    				}
+    			});
+    		//session_mail.setDebug(true);	//�뵒踰꾧렇
     		MimeMessage msg = new MimeMessage(session_mail);
-    		msg.setFrom(new InternetAddress(from, MimeUtility.encodeText(fromName, "UTF-8", "B")));	//보내는 사람 설정
+    		msg.setFrom(new InternetAddress(from, MimeUtility.encodeText(fromName, "UTF-8", "B")));	//蹂대궡�뒗 �궗�엺 �꽕�젙
     		
     		Address address1 = new InternetAddress(to1);
     		msg.addRecipient(Message.RecipientType.TO, address1);
@@ -257,10 +273,9 @@ public class BoardServlet extends HttpServlet {
     		msg.setContent(content, "text/html;charset=utf-8");
     		
     		Transport.send(msg);
-    		System.out.println("인증번호 전송");
     	}catch(MessagingException e) {
-    		System.out.println("catch오류");
     		e.printStackTrace();
+    		mailAdressCheck = false;
     	}catch(Exception e) {
     		e.printStackTrace();
     	}

@@ -51,6 +51,7 @@ input[type=range] {
 	<div class="bradcumbContent">
 		<p></p>
 		<h2>JOIN</h2>
+		<input type="hidden" id="test" value="${authNum }"/>
 	</div>
 </section>
 <form action="join.do" method="post">
@@ -67,7 +68,7 @@ input[type=range] {
 						<div class="col-4"></div>
 						<div class="col-md-6">
 							<div class="form-group wow fadeInUp" data-wow-delay="100ms">
-								<input type="email" class="form-control" name="email" id="email" placeholder="ID">
+								<input type="email" class="form-control" name="email" id="email" placeholder="아이디 (이메일 형식 : test@xxxx.com)">
 							</div>
 						</div>
 					</div>
@@ -76,16 +77,23 @@ input[type=range] {
 						<div class="col-md-2" id="msg"></div>
 						<div class="col-md-2">
 							<button type="button" id="btnOverrappedId" class="btn">중복확인</button>
-							<button type="button" id="btnEmailCheck" class="btn">이메일 인증</button>
+							<button type="button" id="btnEmailSend" class="btn">인증번호 발송</button>
 						</div>
 					</div>
 					<div class="row mb-30">
 						<div class="col-4"></div>
 						<div class="col-md-6">
 							<div class="form-group wow fadeInUp" data-wow-delay="100ms">
-								<input type="text" class="form-control" name="checkMail" id="checkMail"
+								<input type="text" class="form-control" name="inputAuthNum" id="authNum"
 									placeholder="인증번호">
 							</div>
+						</div>
+					</div>
+					<div class="row mb-30">
+						<div class="col-7"></div>
+						<div class="col-md-2" id="msg"></div>
+						<div class="col-md-2">
+							<button type="button" id="btnAuthNumCheck" class="btn">인증번호 확인</button>
 						</div>
 					</div>
 					<div class="row mb-30">
@@ -198,41 +206,18 @@ input[type=range] {
 
 <script type="text/javascript">
 
-	$("#btnEmailCheck").on('click', function(){
-		$.ajax({
-			type:"post",
-			url:"eamilCheck.do",
-			data:{"email":$("#email").val()},
-			async:false,
-			dataType:"text",
-			success:function(data,textStatus){
-				if(data == '0'){
-					$("#msg").html("사용 가능한 아이디");
-					alert("사용 가능한 아이디");
-				}
-				else if(data == '1'){
-					$("#msg").html("사용 불가능한 아이디");
-					alert("사용 불가능한 아이디");
-				}
-			}, error:function(data,textStatus){
-				alert("error")
-			}, complete:function(data,textStatus){}
-		});
-	});
-
 //id중복 검사 & id미입력 검사
 	$("#btnOverrappedId").on('click', function(){
-		var check = $("#id").val();
+		var check = $("#email").val();
 		if(check == ""){
-			alert("아이디를 입력하세요");
-			$("#id").focus();
+			alert("아이디(이메일)를 입력하세요");
+			$("#email").focus();
 			return false;
 		}
 		$.ajax({
 			type:"post",
 			url:"overappedId.do",
-			data:{"id":$("#id").val()},
-			async:false,
+			data:{"id":$("#email").val()},
 			dataType:"text",
 			success:function(data,textStatus){
 				if(data == '0'){
@@ -244,11 +229,80 @@ input[type=range] {
 					alert("사용 불가능한 아이디");
 				}
 			}, error:function(data,textStatus){
-				alert("error")
-			}, complete:function(data,textStatus){}
+				alert("error");
+			}
+		});
+	});
+
+//인증번호 발송,미입력 검사
+	$("#btnEmailSend").on('click', function(){
+		var check = $("#email").val();
+		if(check == ""){
+			alert("이메일을 입력하세요");
+			$("#email").focus();
+			return false;
+		}
+		$.ajax({
+			type:"post",
+			url:"authNumSend.do",
+			data:{"email":$("#email").val()},
+			success:function(data,textStatus){
+				$("#test").html(data);
+				if(data == '1'){
+					alert("인증번호 전송 완료.");
+				}else{
+					alert("이메일 주소를 확인 해주세요.");
+				}
+				//console.log(data);
+			},error:function(data,textStatus){
+				alert("인증번호 발송 에러.");
+			}
 		});
 	});
 	
+	$("#btnAuthNumCheck").on('click', function(){
+		var inputAuthNum = $("#authNum").val();
+		var authNum = $("#test").val();
+		console.log(inputAuthNum);
+		console.log(authNum);
+		if(!inputAuthNum){
+			alert("인증번호를 입력하세요.");
+			return false;
+		}else if(inputAuthNum != authNum){
+			alert("인증 번호가 다릅니다.");
+			$("#authNum").val("");
+			//inputAuthNum.value="";
+			return false;
+		}else if(inputAuthNum == authNum){
+			alert("이메일 인증 성공");
+		}
+		
+	});
+	
+//인증번호 확인
+	/* $("#btnAuthNumCheck").on('click', function(){
+		var check = $("#authNum").val();
+		if(check == ""){
+			alert("인증번호를 입력하세요");
+			$("#authNum").focus();
+			return false;
+		}
+		$.ajax({
+			type:"post",
+			url:"authNumCheck.do",
+			data:{"authNum":$("#authNum").val()},
+			success:function(data,textStatus){
+				if(data == '1'){
+					alert("이메일 인증 성공");
+				}else{
+					alert("인증 번호가 다릅니다.");
+				}
+			},error:function(data,textStatus){
+				alert("시스템 에러.");
+			}
+		});
+	}); */
+
 	//비밀번호 검사
 	$('#pw_ck').focusout(function () {
         var pwd1 = $("#pw").val();

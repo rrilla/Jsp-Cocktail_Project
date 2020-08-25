@@ -78,9 +78,18 @@
 						<div class="cock_title">
 							<div class="text_area">
 								<div class="name">${cock.name }</div>
-								<div class="icon" id="addMyCocktail" >
-                                    <span class="icon-favorites"></span>
-                                </div>
+								<c:choose>
+									<c:when test="${empty session_id }">
+										<div class="icon" id="loginGo" >
+                                    		<span class="icon-favorites"></span>
+                                		</div>
+                                	</c:when>
+                                	<c:otherwise>
+                                		<div class="icon" id="addMyCocktail" >
+                                    		<span class="icon-favorites"></span>
+                                		</div>
+                                	</c:otherwise>
+                                </c:choose>
 							</div>
 							<div >
 								
@@ -233,7 +242,7 @@
 												placeholder="댓글 입력">
 											</c:when>
 											<c:otherwise>
-												<input type="text" name="content" id="loginGo"
+												<input type="text" name="content" id="loginGo2"
 												placeholder="로그인 후 댓글 작성 가능">
 											</c:otherwise>	
 										</c:choose>			
@@ -275,6 +284,7 @@
 
 <script type="text/javascript">
 	
+	//칵테일 즐겨찾기 추가
 	$("#addMyCocktail").on('click', function(){
 		$.ajax({
 			type:"post",
@@ -295,8 +305,18 @@
 		});
 	});
 	
+	
 	$("#loginGo").on('click',function(){
-		var check = confirm('로그인시 작성 가능합니다. 로그인 하시겠습니까?');
+		var check = confirm('로그인시 가능한 서비스 입니다. 로그인 하시겠습니까?');
+        if(check){
+        	location.href="p_login.do";
+        }else{
+			return;        
+        }
+	});
+	
+	$("#loginGo2").on('click',function(){
+		var check = confirm('로그인시 가능한 서비스 입니다. 로그인 하시겠습니까?');
         if(check){
         	location.href="p_login.do";
         }else{
@@ -304,6 +324,7 @@
         }
 	});
 
+	//댓글작성 클릭시 데이터 입력
 	$("#addComm").on('click',function(){
 		var check = $("#content").val();
 		if(check == ""){
@@ -316,15 +337,9 @@
 			url:"addComm.do",
 			data:{"id":$("#commId").val(), "no":$("#addMyCockNo").val(), "content":$("#content").val()},
 			success:function(data,textStatus){
-				if(data = '1'){
-					getList();
-					$('input[name=content]').attr('value',null);
+				if(data != null){
+					getList(data);
 					alert("댓글 작성 완료");
-					//$("#commArea").reload(location.href + "#commArea");
-					
-					//location.href=location.href;
-					
-					
 				}else{
 					alert("댓글 작성 실패");
 				}
@@ -333,35 +348,23 @@
 			}
 		});
 	});
-	
-	function getList() {
-		var str = '';
-		str += '<div class="single-service-area d-flex flex-wrap mb-100">';
-		str += '<div class="icon">';
-		str += '<span class="icon-favorites"></span></div>';
-		str += '<div class="text">';
-		str += '<h5>'+ $("#commId").val() + '</h5>';
-		str += '<p>' + $("#content").val() + '<p>';
-		str += '</div></div>';
-		
-		$("#commArea").html(str);
-	};
-	
-	/* function getList(list) {
+
+	//댓글 작성 완료시 댓글목록 갱신 함수
+	function getList(list) {
 	var str = '';
 	
-	for(let comm of list){
-	str += '<div class="col-12 col-md-6">';
-	str += '<div class="single-service-area d-flex flex-wrap mb-100">';
-	str += '<div class="icon">';
-	str += '<span class="icon-favorites"></span></div>';
-	str += '<div class="text">';
-	str += '<h5>'+ comm.id + '</h5>';
-	str += '<p>' + comm.content + '<p>';
-	str += '</div></div></div>';
-	}
+		for(let comm of list){
+			str += '<div class="col-12 col-md-6">';
+			str += '<div class="single-service-area d-flex flex-wrap mb-100">';
+			str += '<div class="icon">';
+			str += '<span class="icon-favorites"></span></div>';
+			str += '<div class="text">';
+			str += '<h5>'+ comm.id + '</h5>';
+			str += '<p>' + comm.content + '<p>';
+			str += '</div></div></div>';
+		}
 	$("#commArea").html(str);
-}; */
+	};
 	
 </script>
 
