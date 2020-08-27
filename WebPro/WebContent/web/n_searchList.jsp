@@ -28,7 +28,7 @@
                             <h4>${cocktail.name }</h4>
                             <div class="event-meta-data">
                                 <p  class="event-place">${cocktail.base }</p>
-                                <p  class="event-date">${cocktail.alike }</p>
+                                <%-- <p  class="event-date">${cocktail.alike }</p> --%>
                             </div>
                         </div>
                         </a>

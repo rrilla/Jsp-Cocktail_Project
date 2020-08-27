@@ -30,6 +30,7 @@ import dao.MemberDao;
 import dao.MyCockDao;
 import vo.CockList;
 import vo.CockListComm;
+import vo.Cocktail;
 import vo.Member;
 import vo.Member_MyCock;
 
@@ -65,8 +66,8 @@ public class BoardServlet extends HttpServlet {
 			request.getRequestDispatcher("web/join.jsp").forward(request, response);
 			
 		}else if(action.equals("p_tasteSearch.do")) {
-			request.setAttribute("rName", data[(int)(Math.random()*data.length)]);
-			request.getRequestDispatcher("web/tasteSearch.jsp").forward(request, response);
+			//request.getRequestDispatcher("web/tasteSearch.jsp").forward(request, response);
+			request.getRequestDispatcher("web/search.jsp").forward(request, response);
 			
 		}else if(action.equals("login.do")) {
 			String id=request.getParameter("id");
@@ -142,7 +143,7 @@ public class BoardServlet extends HttpServlet {
 		//이름으로 검색버튼 클릭시
 		}else if(action.equals("search.do")) {
 			String cName = request.getParameter("cName");
-			List<CockList> nameResult = CockDao.getInstance().searchName(cName);
+			List<Cocktail> nameResult = CockDao.getInstance().searchName(cName);
 			request.setAttribute("cName", cName);
 			request.setAttribute("nameResult", nameResult);
 			request.getRequestDispatcher("web/n_searchList.jsp").forward(request, response);
@@ -150,15 +151,15 @@ public class BoardServlet extends HttpServlet {
 		//모든 리스트 보기
 		}else if(action.equals("list.do")) {
 			CockDao cockDao=CockDao.getInstance();
-			List<CockList> list=cockDao.selectAll();
+			List<Cocktail> list=cockDao.selectAll();
 			request.setAttribute("list", list);
 			request.getRequestDispatcher("web/allList.jsp").forward(request, response);
 			
 		//상세보기 페이지 이동
 		}else if(action.equals("detail.do")) {
 			int no = Integer.parseInt(request.getParameter("no"));
-			CockList cock = CockDao.getInstance().SelectOne(no);
-			List<CockList> relevant = CockDao.getInstance().relevantCock(cock.getBase(), no);
+			Cocktail cock = CockDao.getInstance().SelectOne(no);
+			List<Cocktail> relevant = CockDao.getInstance().relevantCock(cock.getBase(), no);
 			List<CockListComm> listComm = ListCommDao.getInstance().selectAll(no);
 			request.setAttribute("listComm", listComm);
 			request.setAttribute("cock", cock);

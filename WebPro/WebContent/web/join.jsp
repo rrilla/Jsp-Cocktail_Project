@@ -205,7 +205,7 @@ input[type=range] {
 </form>
 
 <script type="text/javascript">
-
+var test = null;
 //id중복 검사 & id미입력 검사
 	$("#btnOverrappedId").on('click', function(){
 		var check = $("#email").val();
@@ -247,13 +247,14 @@ input[type=range] {
 			url:"authNumSend.do",
 			data:{"email":$("#email").val()},
 			success:function(data,textStatus){
-				$("#test").html(data);
-				if(data == '1'){
-					alert("인증번호 전송 완료.");
-				}else{
+				test = null;
+				test = data;
+				console.log(test);
+				if(data == '0'){
 					alert("이메일 주소를 확인 해주세요.");
+				}else{
+					alert("인증번호 전송 완료.");
 				}
-				//console.log(data);
 			},error:function(data,textStatus){
 				alert("인증번호 발송 에러.");
 			}
@@ -262,7 +263,7 @@ input[type=range] {
 	
 	$("#btnAuthNumCheck").on('click', function(){
 		var inputAuthNum = $("#authNum").val();
-		var authNum = $("#test").val();
+		var authNum = test;
 		console.log(inputAuthNum);
 		console.log(authNum);
 		if(!inputAuthNum){
@@ -271,12 +272,10 @@ input[type=range] {
 		}else if(inputAuthNum != authNum){
 			alert("인증 번호가 다릅니다.");
 			$("#authNum").val("");
-			//inputAuthNum.value="";
 			return false;
 		}else if(inputAuthNum == authNum){
 			alert("이메일 인증 성공");
 		}
-		
 	});
 	
 //인증번호 확인
