@@ -221,9 +221,28 @@ public class BoardServlet extends HttpServlet {
 			//test 중
 		}else if(action.equals("test.do")) {
 			System.out.println("testdo 실행");
+			int abv = Integer.parseInt(request.getParameter("abv"));
+			List<Cocktail> result = CockDao.getInstance().searchAbv(abv);
+			Gson gson = new Gson();
+			String strJson = "";
+			strJson = gson.toJson(result);
+			response.setContentType("application/json; charset=UTF-8");
+			System.out.println(strJson);
+			writer.print(strJson);
+			writer.close();
 			
 		}else if(action.equals("test2.do")) {
-			request.getRequestDispatcher("web/search.jsp").forward(request, response);
+			System.out.println("test2 실행");
+			int abv = Integer.parseInt(request.getParameter("abv"));
+			int color = Integer.parseInt(request.getParameter("color"));
+			List<Cocktail> result = CockDao.getInstance().searchColor(abv, color);
+			Gson gson = new Gson();
+			String strJson = "";
+			strJson = gson.toJson(result);
+			response.setContentType("application/json; charset=UTF-8");
+			System.out.println(strJson);
+			writer.print(strJson);
+			writer.close();
 		}
 			
 	}

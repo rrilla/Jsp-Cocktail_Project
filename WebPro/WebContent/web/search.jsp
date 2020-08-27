@@ -100,8 +100,6 @@ input[type=range] {
                 </div>
                 </c:forEach>
 
-            
-
             </div>
 
             <div class="row">
@@ -117,14 +115,19 @@ input[type=range] {
         
         <div class="searchbar">
         	<div class="category" >
-        		<input type="checkbox" class="input-chek" name="flavor" id="bit" value="bit"><label for="bit" class="form-chek" >쓴 맛</label>
-				<input type="checkbox" class="input-chek" name="flavor" id="sweet" value="sweet"><label for="sweet" class="form-chek" >단 맛</label>
-        		<input type="checkbox" class="input-chek" name="flavor" id="sour" value="sour"><label for="sour" class="form-chek">신 맛</label>
+        		<span id="abv0"> 무알콜 </span>
+        		<span id="abv1"> 0~15 </span>
+        		<span id="abv2"> 15~30 </span>
+        		<span id="abv3"> 30 이상 </span>
         	</div>
         	<div class="category">
-        		<input type="checkbox" class="input-chek" name="color" id="pink" value="pink"><label for="pink" class="form-chek">핑크</label>
-				<input type="checkbox" class="input-chek" name="color" id="blue" value="blue"><label for="blue" class="form-chek">파랑</label>
-        		<input type="checkbox" class="input-chek" name="color" id="green" value="green"><label for="green" class="form-chek">초록</label>
+        		<span id="cWhite"> 화이트 </span>
+        		<span id="cBlack"> 블랙 </span>
+        		<span id="cRed"> 레드 </span>
+        		<span id="cYellow"> 옐로우 </span>
+        		<span id="cBlue"> 블루 </span>
+        		<span id="cGreen"> 그린 </span>
+        		<span id="cMix"> 믹스 </span>
         	</div>
         	<div class="category">
         		<input type="checkbox" class="input-chek" name="base" id="lum" value="lum"><label for="lum" class="form-chek">럼</label>
@@ -136,35 +139,40 @@ input[type=range] {
     </section>
    			
 <script type="text/javascript">
-	function select(){
-		var checkFlavor = [];
-		var checkColor = [];
-		var checkBase = [];
-		
-		$("input[name='flavor']:checked").each(function(i){
-			checkFlavor.push($(this).val());
-		});
-		$("input[name='color']:checked").each(function(i){
-			checkColor.push($(this).val());
-		});
-		$("input[name='base']:checked").each(function(i){
-			checkBase.push($(this).val());
-		});
-		
-		var allData = {"flavor" : checkFlavor, "color" : checkColor,"base" : checkBase};
-		
+var abv;
+var color;
+var taste;
+
+//0도 무알콜 클릭시
+	$("#abv0").on('click', function(){
 		$.ajax({
-			url : "/getBoardList.do",
-	        data : allData,
-	        type : 'post',
-	        success : function(data){
-	        	//리스트 아이디 설정해서 하면 되려나
-	        },
-			error : function(){
-            alert("error");
-        }
+			type:"post",
+			url:"test.do",
+			data:{"abv":"2"},
+			success:function(data,textStatus){
+				abv = 2;
+				console.log(data);
+				console.log(abv);
+			}, error:function(data,textStatus){
+				alert("error");
+			}, complete:function(data,textStatus){}
 		});
-	}
+	});
+	
+	$("#cWhite").on('click', function(){
+		$.ajax({
+			type:"post",
+			url:"test2.do",
+			data:{"color":"1", "abv":abv},
+			success:function(data,textStatus){
+				var color = 1;
+				console.log(data);
+			}, error:function(data,textStatus){
+				alert("error");
+			}, complete:function(data,textStatus){}
+		});
+	});
 
 </script>
+
 <%@ include file="../include/footer.jsp" %>
