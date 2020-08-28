@@ -24,13 +24,12 @@ import javax.servlet.http.HttpSession;
 
 import com.google.gson.Gson;
 
+import dao.CockCommDao;
 import dao.CockDao;
-import dao.ListCommDao;
 import dao.MemberDao;
 import dao.MyCockDao;
-import vo.CockList;
-import vo.CockListComm;
 import vo.Cocktail;
+import vo.CocktailComm;
 import vo.Member;
 import vo.Member_MyCock;
 
@@ -66,7 +65,6 @@ public class BoardServlet extends HttpServlet {
 			request.getRequestDispatcher("web/join.jsp").forward(request, response);
 			
 		}else if(action.equals("p_tasteSearch.do")) {
-			//request.getRequestDispatcher("web/tasteSearch.jsp").forward(request, response);
 			request.getRequestDispatcher("web/search.jsp").forward(request, response);
 			
 		}else if(action.equals("login.do")) {
@@ -78,6 +76,7 @@ public class BoardServlet extends HttpServlet {
 				System.out.println(id + " 님이 로그인 하심.");
 				HttpSession session=request.getSession();
 				session.setAttribute("session_id", id);
+				session.setAttribute("session_nickname", MemberDao.getInstance().SelectOne(id).getNickname());
 			}
 			
 		}else if(action.equals("logout.do")) {
@@ -117,20 +116,23 @@ public class BoardServlet extends HttpServlet {
 		
 		//회원가입 버튼 클릭시
 		}else if(action.equals("join.do")) {
-			String email=request.getParameter("email");
-			String name=request.getParameter("name");
-			String pw=request.getParameter("pw");
+			String id = request.getParameter("email");
+			String name = request.getParameter("name");
+			String nickname = request.getParameter("nickname");
+			String pw = request.getParameter("pw");
 			String address = request.getParameter("area1") + 
 					  ", " + request.getParameter("area2");
 			String one_s = request.getParameter("one_s");
-			boolean flag = MemberDao.getInstance().insert(new Member(email,pw,name,address,one_s));
+			String img_name = request.getParameter("img_name");
+			boolean flag = MemberDao.getInstance().insert(new Member(id,name,nickname,pw,address,one_s,img_name));
 			if(flag) {
 				HttpSession session = request.getSession();
-				session.setAttribute("session_id", email);
-				System.out.println(email + "님이 회원가입 하심.");
-				writer.print("<script>alert('회원가입 성공');location.href='p_main.do';</script>");
+				session.setAttribute("session_id", id);
+				session.setAttribute("session_nickname", nickname);
+				System.out.println(id + "님이 회원가입 하심.");
+				writer.print("<script>location.href='p_main.do';</script>");
 			}else {
-				writer.print("<script>alert('회원가입 실패');location.href='p_join.do';</script>");
+				writer.print("<script>alert('회원가입에 실패하였습니다.');location.href='p_join.do';</script>");
 			}
 			
 		//마이페이지 이동
@@ -160,7 +162,7 @@ public class BoardServlet extends HttpServlet {
 			int no = Integer.parseInt(request.getParameter("no"));
 			Cocktail cock = CockDao.getInstance().SelectOne(no);
 			List<Cocktail> relevant = CockDao.getInstance().relevantCock(cock.getBase(), no);
-			List<CockListComm> listComm = ListCommDao.getInstance().selectAll(no);
+			List<CocktailComm> listComm = CockCommDao.getInstance().selectAll(no);
 			request.setAttribute("listComm", listComm);
 			request.setAttribute("cock", cock);
 			request.setAttribute("relevant", relevant);
@@ -191,67 +193,54 @@ public class BoardServlet extends HttpServlet {
 			
 		//댓글쓰기 버튼 클릭시
 		}else if(action.equals("addComm.do")) {
-			String id = null;
-			id = request.getParameter("id");
+			HttpSession session=request.getSession();
+			String id = (String)session.getAttribute("session_id");
 			String content = request.getParameter("content");
 			int no = Integer.parseInt(request.getParameter("no"));
-			CockListComm cockListComm = new CockListComm(no,id,content);
-			boolean flag = ListCommDao.getInstance().insertComm(cockListComm);
+			CocktailComm cockListComm = new CocktailComm(no,id,content);
+			boolean flag = CockCommDao.getInstance().insertComm(cockListComm);
 			if(flag) {
-				List<CockListComm> listComm = ListCommDao.getInstance().selectAll(no);
-				Gson gson = new Gson();
-				String strJson = "";
-				strJson = gson.toJson(listComm);
-				response.setContentType("application/json; charset=UTF-8");
-				writer.print(strJson);
-				writer.close();
+				request.getRequestDispatcher("listComm.do").forward(request, response);
 			}
-			
-			
-			
-		}else if(action.equals("rName.do")) {
-			writer.print(data[(int)(Math.random()*data.length)]);
-		
-			
-			
-			
-			
-			
-			
-			//test 중
-		}else if(action.equals("test.do")) {
-			System.out.println("testdo 실행");
-			int abv = Integer.parseInt(request.getParameter("abv"));
-			List<Cocktail> result = CockDao.getInstance().searchAbv(abv);
+
+			//detail페이지 댓글목록갱신
+		}else if(action.equals("listComm.do")) {
+			int no = Integer.parseInt(request.getParameter("no"));
+			List<CocktailComm> listComm = CockCommDao.getInstance().selectAll(no);
 			Gson gson = new Gson();
 			String strJson = "";
-			strJson = gson.toJson(result);
+			strJson = gson.toJson(listComm);
 			response.setContentType("application/json; charset=UTF-8");
-			System.out.println(strJson);
 			writer.print(strJson);
 			writer.close();
 			
-		}else if(action.equals("test2.do")) {
-			System.out.println("test2 실행");
+			//취향페이지 목록갱신
+		}else if(action.equals("searchTaste.do")) {
 			int abv = Integer.parseInt(request.getParameter("abv"));
 			int color = Integer.parseInt(request.getParameter("color"));
-			List<Cocktail> result = CockDao.getInstance().searchColor(abv, color);
+			int taste = Integer.parseInt(request.getParameter("taste"));
+			List<Cocktail> result = CockDao.getInstance().searchTaste(abv, color, taste);
 			Gson gson = new Gson();
 			String strJson = "";
 			strJson = gson.toJson(result);
 			response.setContentType("application/json; charset=UTF-8");
-			System.out.println(strJson);
 			writer.print(strJson);
 			writer.close();
+			
+			//header2.jsp실행시 랜덤으로 칵테일 이름 뿌려줌	
+		}else if(action.equals("rName.do")) {
+			writer.print(data[(int)(Math.random()*data.length)]);		
+			
+			
 		}
 			
 	}
     
     private void sendEmail(String email, String authNum) {
-    	String host = "smtp.gmail.com";
-    	String subject = "JaeHyeon`s Web 인증번호 ";	//�젣紐�
-    	String fromName = "JaeHyeon`s Web 관리자";	//蹂대궦�궗�엺 �씠由�
-    	String from = "rrilla01@gmail.com";			//蹂대궦�궗�엺 硫붿씪
+    	String host = "smtp.gmail.com";				//smtp 서버
+    	String subject = "JaeHyeon`s Web 인증번호 ";	//메일 제목
+    	String fromName = "JaeHyeon`s Web 관리자";	//보내는 이
+    	String from = "rrilla01@gmail.com";			//보내는 메일
     	String to1 = email;
     	
     	String content = "재현이가 만든 웹사이트에<br>재현이가 요청해서<br>재현이가 보낸<br>재현이가 입력해야 할<br>재현이를 위한 인증번호는<br><h1>[" + authNum + "]</h1><br>입니다.";
@@ -265,7 +254,7 @@ public class BoardServlet extends HttpServlet {
 //    		props.put("mail.smtp.port", "465");
 //    		props.put("mail.smtp.user", from);
 //    		props.put("mail.smtp.auth", "true");
-    		props.put("mail.smtp.host","gmail-smtp.l.google.com"); // �꽕�씠踰� SMTP
+    		props.put("mail.smtp.host","gmail-smtp.l.google.com");
     		
     		props.put("mail.smtp.port", "465");
     		props.put("mail.smtp.starttls.enable", "true");
@@ -282,17 +271,17 @@ public class BoardServlet extends HttpServlet {
     					return new PasswordAuthentication("rrilla01@gmail.com", "jh940520");
     				}
     			});
-    		//session_mail.setDebug(true);	//�뵒踰꾧렇
+    		//session_mail.setDebug(true);	//디버깅
     		MimeMessage msg = new MimeMessage(session_mail);
-    		msg.setFrom(new InternetAddress(from, MimeUtility.encodeText(fromName, "UTF-8", "B")));	//蹂대궡�뒗 �궗�엺 �꽕�젙
+    		msg.setFrom(new InternetAddress(from, MimeUtility.encodeText(fromName, "UTF-8", "B")));	//보내는 사람설정
     		
     		Address address1 = new InternetAddress(to1);
-    		msg.addRecipient(Message.RecipientType.TO, address1);
-    		msg.setSubject(subject);
-    		msg.setSentDate(new java.util.Date());
+    		msg.addRecipient(Message.RecipientType.TO, address1);	//받는 사람설정
+    		msg.setSubject(subject);	//제목 설정
+    		msg.setSentDate(new java.util.Date());	//보내는 날짜 설정
     		msg.setContent(content, "text/html;charset=utf-8");
     		
-    		Transport.send(msg);
+    		Transport.send(msg);	//메일보내기
     	}catch(MessagingException e) {
     		e.printStackTrace();
     		mailAdressCheck = false;

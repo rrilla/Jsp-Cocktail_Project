@@ -62,7 +62,7 @@
 					data-wow-delay="100ms">
 					<!-- Post Thumb -->
 					<div class="blog-post-thumb mt-30">
-						<a href="#"><img src="img/web-img/orgasm.jpg" alt="" style=" width: 100%; height: 100%;"></a>
+						<a href="#"><img src="img/cock-img/${cock.img_name }" alt="" style=" width: 100%; height: 100%;"></a>
 						<!-- Post Date -->
 					</div>
 
@@ -77,7 +77,7 @@
 					<div class="blog-post-thumb mt-30">
 						<div class="cock_title">
 							<div class="text_area">
-								<div class="name">${cock.name }</div>
+								<div class="name">${cock.name }(${cock.ename })</div>
 								<c:choose>
 									<c:when test="${empty session_id }">
 										<div class="icon" id="loginGo" >
@@ -100,32 +100,23 @@
 	                            </div> -->
 							<div class="mt-70"></div>
 							<div class="mt-40" style="padding: 0px 140px 20px 10px;">
-								||||||간단한 칵테일 설명|||||| ${cock.tmi }</div>
+								<h5>간단설명</h5>${cock.tmi }
+							</div>
 						</div>
 
 						<div class="single-widget-area">
-							<div class="widget-title" style="color: #808080">
-								<b>맛</b>
-							</div>
+							<h6>베이스</h6>
 							<div class="widget-content">
 								<ul class="tags">
-									<li><a>달달</a></li>
-									<c:forEach items="${relevant }" var="cockList">
-										<li><a href="detail.do?no=${cockList.no }">${cockList.name }</a>
-										</li>
-										<!-- <li><a href="#">performers</a></li> -->
-									</c:forEach>
+										<li>${cock.base }</li>
 								</ul>
 							</div>
 						</div>
 						
 						<div class="single-widget-area">
-							<div class="widget-title" style="color: #808080">
-								<b>연관 칵테일</b>
-							</div>
+							<h6>연관 칵테일</h6>
 							<div class="widget-content">
 								<ul class="tags">
-									<li><a>지우면 되는 것</a></li>
 									<c:forEach items="${relevant }" var="cockList">
 										<li><a href="detail.do?no=${cockList.no }">${cockList.name }</a>
 										</li>
@@ -144,15 +135,24 @@
 
 	<div class="single-blog-post mb-100 wow fadeInUp" data-wow-delay="100ms">
 		<div class="blog-content">
-			<a href="#" class="post-title">집에서 간단하게 만들기</a>
+			<h3>레시피</h3>
+			<h6>재료</h6>
 			<div class="post-meta d-flex mb-30">
-				<p class="tags">
-					<a href="#">럼</a>
-				</p>
-				<p class="tags">
-					<a href="#">럼2</a>
-				</p>
+				<p class="tags">${cock.ingredient }</p>
 			</div>
+			<h6>기법</h6>
+			<div class="post-meta d-flex mb-30">
+				<p class="tags">${cock.technique }</p>
+			</div>
+			<h6>글라스</h6>
+			<div class="post-meta d-flex mb-30">
+				<p class="tags">${cock.glass }</p>
+			</div>
+			<h6>가니쉬</h6>
+			<div class="post-meta d-flex mb-30">
+				<p class="tags">${cock.garnish }</p>
+			</div>
+			<h6>만드는 법</h6>
 			<p>${cock.recipe }</p>
 			<br> <br>
 
@@ -164,7 +164,7 @@
 						aria-selected="true">유래</a></li>
 					<li class="nav-item"><a class="nav-link" id="tab--2"
 						data-toggle="tab" href="#tab2" role="tab" aria-controls="tab2"
-						aria-selected="false">페어링하기 좋은 음식</a></li>
+						aria-selected="false">관련 영상</a></li>
 					<li class="nav-item"><a class="nav-link active" id="tab--3"
 						data-toggle="tab" href="#tab3" role="tab" aria-controls="tab3"
 						aria-selected="false">후기</a></li>
@@ -176,11 +176,7 @@
 						<div class="oneMusic-tab-content">
 							<!-- Tab Text -->
 							<div class="oneMusic-tab-text">
-								<p>Nㅎ롱ㄱe ex vel magna tincidunt, ut porta nisl finibus.
-									Vivamus eu dolor eu quam varius rutrum. Fusce nec justo id sem
-									aliquam fringilla nec non lacus. Suspendisse eget lobortis
-									nisi, ac cursus odio. Vivamus nibh velit, rutrum at ipsum ac,
-									dignissim iaculis ante.</p>
+								<p>${cock.tmi }</p>
 							</div>
 						</div>
 					</div>
@@ -189,11 +185,7 @@
 						<div class="oneMusic-tab-content">
 							<!-- Tab Text -->
 							<div class="oneMusic-tab-text">
-								<p>ㅁㄴㅇㄻㅈㄷㄺㅁx vel magna tincidunt, ut porta nisl finibus.
-									Vivamus eu dolor eu quam varius rutrum. Fusce nec justo id sem
-									aliquam fringilla nec non lacus. Suspendisse eget lobortis
-									nisi, ac cursus odio. Vivamus nibh velit, rutrum at ipsum ac,
-									dignissim iaculis ante.</p>
+								${cock.url }
 							</div>
 						</div>
 					</div>
@@ -207,23 +199,8 @@
 								<br>
 								<br>
 								<div class="col-12">
-									<div class="row">
-						
-										<!-- Single Service Area -->
-										<c:forEach items="${listComm }" var="comm">
-											<div class="col-12 col-md-6">
-												<div class="single-service-area d-flex flex-wrap mb-100">
-													<div class="icon">
-														<span class="icon-favorites"></span>
-													</div>
-													<div class="text">
-														<h5>${comm.id }</h5>
-														<p>${comm.content }</p>
-													</div>
-												</div>
-											</div>
-										</c:forEach>
-										<div id="commArea" class="col-12 col-md-6"></div>
+									<div class="row" id="commArea">
+										<!-- 댓글들어옴 -->
 									</div>
 								</div>
 								
@@ -233,7 +210,7 @@
 								<div class="newsletter-area mb-100">
 									<div class="section-heading text-left mb-50">
 										<img src="img/member-img/bascMember.jpg" alt="" />
-										<h2 >${session_id }</h2>
+										<h2 >${session_nickname }</h2>
 									</div>
 									<div class="newsletter-form">
 										<c:choose>
@@ -284,6 +261,21 @@
 
 <script type="text/javascript">
 	
+	//댓글리스트 
+	$(document).ready(function(){
+		$.ajax({
+			type:"post",
+			url:"listComm.do",
+			data:{"no": $("#addMyCockNo").val()},
+			success:function(data,textStatus){
+				getList(data);
+				console.log(data);
+			}, error:function(data,textStatus){
+				alert("error");
+			}, complete:function(data,textStatus){}
+		});
+	});
+	
 	//칵테일 즐겨찾기 추가
 	$("#addMyCocktail").on('click', function(){
 		$.ajax({
@@ -324,7 +316,7 @@
         }
 	});
 
-	//댓글작성 클릭시 데이터 입력
+	//댓글작성 클릭시 데이터 입력 검사 및 추가
 	$("#addComm").on('click',function(){
 		var check = $("#content").val();
 		if(check == ""){
@@ -357,9 +349,9 @@
 			str += '<div class="col-12 col-md-6">';
 			str += '<div class="single-service-area d-flex flex-wrap mb-100">';
 			str += '<div class="icon">';
-			str += '<span class="icon-favorites"></span></div>';
-			str += '<div class="text">';
-			str += '<h5>'+ comm.id + '</h5>';
+			str += '<img src="img/member-img/'+comm.img_name + '" alt="" style=" width: 100%; height: 100%;">'
+			str += '</div><div class="text">';
+			str += '<h5>'+ comm.nickname + '</h5>';
 			str += '<p>' + comm.content + '<p>';
 			str += '</div></div></div>';
 		}

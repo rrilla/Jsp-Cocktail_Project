@@ -143,7 +143,7 @@
                                         		<a href="p_login.do" id="loginBtn">Login / Register</a>
                                         	</c:when>
                                         	<c:otherwise>
-                                        		<a href="logout.do" id="logoutBtn">Logout[${session_id }]</a>
+                                        		<a href="logout.do" id="logoutBtn">Logout[${session_nickname }]</a>
                                         	</c:otherwise>	
                                         </c:choose>	
                                     </div>

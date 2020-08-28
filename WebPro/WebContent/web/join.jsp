@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="../include/header2.jsp"%>
+
 <style>
 .input-info {
 	display: flex;
@@ -51,10 +52,9 @@ input[type=range] {
 	<div class="bradcumbContent">
 		<p></p>
 		<h2>JOIN</h2>
-		<input type="hidden" id="test" value="${authNum }"/>
 	</div>
 </section>
-<form action="join.do" method="post">
+<form name="join" onsubmit="return validate();" action="join.do" method="post">
 	<section class="latest-albums-area section-padding-100">
 		<div class="row">
 			<div class="col-6">
@@ -76,7 +76,6 @@ input[type=range] {
 						<div class="col-7"></div>
 						<div class="col-md-2" id="msg"></div>
 						<div class="col-md-2">
-							<button type="button" id="btnOverrappedId" class="btn">중복확인</button>
 							<button type="button" id="btnEmailSend" class="btn">인증번호 발송</button>
 						</div>
 					</div>
@@ -109,6 +108,15 @@ input[type=range] {
 						<div class="col-4"></div>
 						<div class="col-md-6">
 							<div class="form-group wow fadeInUp" data-wow-delay="100ms">
+								<input type="text" class="form-control" name="nickname" id="nickname"
+									placeholder="NickName">
+							</div>
+						</div>
+					</div>
+					<div class="row mb-30">
+						<div class="col-4"></div>
+						<div class="col-md-6">
+							<div class="form-group wow fadeInUp" data-wow-delay="100ms">
 								<input type="password" class="form-control" name="pw" id="pw"
 									placeholder="Password">
 							</div>
@@ -118,7 +126,7 @@ input[type=range] {
 						<div class="col-4"></div>
 						<div class="col-md-6" style="text-align: center;">
 							<div class="form-group wow fadeInUp" data-wow-delay="100ms">
-								<input type="password" class="form-control" id="pw_ck"
+								<input type="password" class="form-control" id="checkpw"
 									placeholder="Password-confirm">
 							</div>
 							<div class="col-md-8" id="msg2"></div>
@@ -138,16 +146,16 @@ input[type=range] {
 						<div class="col-md-6">
 							<label>좋아하는 술</label>
 							<hr>
-							<input type="checkbox" class="input-chek" name="one_s" id="red" value="소주" /><label for="red" class="form-chek">소주</label> 
-							<input type="checkbox" class="input-chek" name="one_s" id="clear" value="맥주" /><label for="clear" class="form-chek">맥주</label>
-							<input type="checkbox" class="input-chek" name="one_s" id="pink" value="소맥" /><label for="pink" class="form-chek">소맥</label>
-							<input type="checkbox" class="input-chek" name="one_s" id="green" value="막걸리" /><label for="green" class="form-chek">막걸리</label>
-							<input type="checkbox" class="input-chek" name="one_s" id="blue" value="와인" /><label for="blue" class="form-chek">와인 </label>
-							<input type="checkbox" class="input-chek" name="one_s" id="whiskey" value="위스키" /><label for="whiskey" class="form-chek">위스키</label>
-							<input type="checkbox" class="input-chek" name="one_s" id="sake" value="사케" /><label for="sake" class="form-chek">사케</label>
+							<input type="radio" class="input-chek" name="one_s" id="red" onclick="autoImg(1);" value="소주" /><label for="red" class="form-chek">소주</label> 
+							<input type="radio" class="input-chek" name="one_s" id="clear" onclick="autoImg(2);" value="맥주" /><label for="clear" class="form-chek">맥주</label>
+							<input type="radio" class="input-chek" name="one_s" id="pink" onclick="autoImg(3);" value="소맥" /><label for="pink" class="form-chek">소맥</label>
+							<input type="radio" class="input-chek" name="one_s" id="green" onclick="autoImg(4);" value="막걸리" /><label for="green" class="form-chek">막걸리</label>
+							<input type="radio" class="input-chek" name="one_s" id="blue" onclick="autoImg(5);" value="와인" /><label for="blue" class="form-chek">와인 </label>
+							<input type="radio" class="input-chek" name="one_s" id="whiskey" onclick="autoImg(6);" value="위스키" /><label for="whiskey" class="form-chek">위스키</label>
+							<input type="radio" class="input-chek" name="one_s" id="sake" onclick="autoImg(7);" value="사케" /><label for="sake" class="form-chek">사케</label>
 						</div>
 					</div>
-
+							<input type="hidden" id="img_name" name="img_name" />
 					<div class="row mt-30">
 						<div class="col-2"></div>
 						<div class="col-md-6">
@@ -205,15 +213,19 @@ input[type=range] {
 </form>
 
 <script type="text/javascript">
+
 var test = null;
-//id중복 검사 & id미입력 검사
-	$("#btnOverrappedId").on('click', function(){
-		var check = $("#email").val();
-		if(check == ""){
-			alert("아이디(이메일)를 입력하세요");
-			$("#email").focus();
-			return false;
-		}
+var checkEmail;
+var checkNum;
+
+	$('#email').focusout(function () {
+		var re2 = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+		// 이메일이 적합한지 검사할 정규식
+		var email = document.getElementById("email");
+	       if(!check2(re2, email, "적합하지 않은 이메일 형식입니다.")) {
+	    	   checkEmail = 0;
+	           return false;
+	       }
 		$.ajax({
 			type:"post",
 			url:"overappedId.do",
@@ -221,19 +233,19 @@ var test = null;
 			dataType:"text",
 			success:function(data,textStatus){
 				if(data == '0'){
-					$("#msg").html("사용 가능한 아이디");
-					alert("사용 가능한 아이디");
+					$("#msg").html("사용 가능");
+					checkEmail = 1;
 				}
 				else if(data == '1'){
-					$("#msg").html("사용 불가능한 아이디");
-					alert("사용 불가능한 아이디");
+					$("#msg").html("사용 불가능");
+					checkEmail = 0;
 				}
 			}, error:function(data,textStatus){
 				alert("error");
 			}
 		});
 	});
-
+	
 //인증번호 발송,미입력 검사
 	$("#btnEmailSend").on('click', function(){
 		var check = $("#email").val();
@@ -242,23 +254,27 @@ var test = null;
 			$("#email").focus();
 			return false;
 		}
-		$.ajax({
-			type:"post",
-			url:"authNumSend.do",
-			data:{"email":$("#email").val()},
-			success:function(data,textStatus){
-				test = null;
-				test = data;
-				console.log(test);
-				if(data == '0'){
-					alert("이메일 주소를 확인 해주세요.");
-				}else{
-					alert("인증번호 전송 완료.");
+		if(checkEmail=='1'){
+			$.ajax({
+				type:"post",
+				url:"authNumSend.do",
+				data:{"email":$("#email").val()},
+				success:function(data,textStatus){
+					test = null;
+					test = data;
+					console.log(test);
+					if(data == '0'){
+						alert("서버 에러");
+					}else{
+						alert("인증번호 전송 완료.");
+					}
+				},error:function(data,textStatus){
+					alert("인증번호 발송 에러.");
 				}
-			},error:function(data,textStatus){
-				alert("인증번호 발송 에러.");
-			}
-		});
+			});
+		}else{
+			alert("이메일을 확인 해주세요.");
+		}
 	});
 	
 	$("#btnAuthNumCheck").on('click', function(){
@@ -274,6 +290,7 @@ var test = null;
 			$("#authNum").val("");
 			return false;
 		}else if(inputAuthNum == authNum){
+			checkNum = 1;
 			alert("이메일 인증 성공");
 		}
 	});
@@ -303,7 +320,7 @@ var test = null;
 	}); */
 
 	//비밀번호 검사
-	$('#pw_ck').focusout(function () {
+	/* $('#pw_ck').focusout(function () {
         var pwd1 = $("#pw").val();
         var pwd2 = $("#pw_ck").val();
  
@@ -319,7 +336,21 @@ var test = null;
                 $("#pw_ck").val("");
             }
         }
-    });
+    }); */
+	
+	//member 좋아하는 술 선택시 img 자동 추가
+	function autoImg(a) {
+		switch(a){
+		case 1: $('#img_name').val('soju.jpg');break;
+		case 2: $('#img_name').val('beer.jpg');break;
+		case 3: $('#img_name').val('soju_beer.jpg');break;
+		case 4: $('#img_name').val('mak.jpg');break;
+		case 5: $('#img_name').val('wine.jpg');break;
+		case 6: $('#img_name').val('whiskey.jpg');break;
+		case 7: $('#img_name').val('sake.jpg');break;
+		default : $('#img_name').val('basic.jpg');
+		}
+	}
 	
 	//지역선택
 	var cat1_num = new Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
@@ -425,6 +456,81 @@ var test = null;
 		}
 	}
 	
+	//회원가입 클릭시 유효성 검사
+	   function validate() {
+	       // 이메일이 적합한지 검사할 정규식
+	       var id = document.getElementById("id");
+	       var pw = document.getElementById("pw");
+	       var email = document.getElementById("email");
+
+	       
+	       if(checkEmail != '1') {
+	           alert("이메일을 확인 해주세요.");
+	           email.focus();
+	           return false;
+	       }
+	       if(checkNum != '1') {
+	           alert("이메일 인증을 해주세요.");
+	           email.focus();
+	           return false;
+	       }
+	       if(join.name.value=="") {
+	           alert("이름을 입력해 주세요");
+	           join.name.focus();
+	           return false;
+	       }
+	       if(join.nickname.value=="") {
+	           alert("닉네임을 입력해 주세요");
+	           join.nickname.focus();
+	           return false;
+	       }
+	       if(join.pw.value=="") {
+	           alert("비밀번호를 입력해 주세요");
+	           join.pw.focus();
+	           return false;
+	       }
+	       if(join.pw.value != join.checkpw.value) {
+	           alert("비밀번호가 다릅니다. 다시 확인해 주세요.");
+	           join.checkpw.value = "";
+	           join.checkpw.focus();
+	           return false;
+	       }
+	       if(join.one_s[0].checked==false &&
+	           join.one_s[1].checked==false &&
+	           join.one_s[2].checked==false &&
+	           join.one_s[3].checked==false &&
+	           join.one_s[4].checked==false &&
+	           join.one_s[5].checked==false &&
+	           join.one_s[6].checked==false) {
+	           alert("좋아하는 술을 선택 해주세요.");
+	           return false;
+	       }
+	       if(join.area2.value == "-선택-" ||
+	    	   join.area1.value == "-선택-" ||
+	    	   join.area2.value == null){
+	    	   alert("지역을 선택 해주세요.");
+	           return false;
+	       }
+	       alert("회원가입이 완료되었습니다.");
+	   }
+
+	   function check(re, what, message) {
+	       if(re.test(what.value)) {
+	           return true;
+	       }
+	       alert(message);
+	       what.value = "";
+	       what.focus();
+	       return false;
+	   }
+	   
+	   function check2(re, what, message) {
+	       if(re.test(what.value)) {
+	           return true;
+	       }
+	       $("#msg").html(message);
+	       return false;
+	   }
 </script>
 
 <%@ include file="../include/footer.jsp"%>

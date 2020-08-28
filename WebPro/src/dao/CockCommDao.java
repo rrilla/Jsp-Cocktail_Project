@@ -1,4 +1,4 @@
-package dao;
+	package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,36 +6,35 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import vo.CockList;
-import vo.CockListComm;
+import vo.CocktailComm;
 
-public class ListCommDao {
-	private static ListCommDao instance = new ListCommDao();
+public class CockCommDao {
+	private static CockCommDao instance = new CockCommDao();
 
-	private ListCommDao() {};
+	private CockCommDao() {};
 
-	public static ListCommDao getInstance() {
+	public static CockCommDao getInstance() {
 		return instance;
 	}
 	
-	public List<CockListComm> selectAll(int no){
-		List<CockListComm> list = new ArrayList<CockListComm>();
+	public List<CocktailComm> selectAll(int no){
+		List<CocktailComm> list = new ArrayList<CocktailComm>();
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sql = "select * from cocklist_comm where cocklist_no=?";
+		String sql = "select m.nickname, m.img_name, c.id, c.content, c.cocktail_no from member m, cocktail_comm c where c.cocktail_no = ?";
 		try {
 			conn = DBconn.getConnection();
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, no);
 			rs = ps.executeQuery();
 			while(rs.next()) {
-				CockListComm listComm = new CockListComm();
-				listComm.setNo(rs.getInt("no"));
-				listComm.setCocklist_no(rs.getInt("cocklist_no"));
+				CocktailComm listComm = new CocktailComm();
+				listComm.setNickname(rs.getString("nickname"));
+				listComm.setImg_name(rs.getString("img_name"));
 				listComm.setId(rs.getString("id"));
 				listComm.setContent(rs.getString("content"));
-				listComm.setWrite_date(rs.getDate("write_date"));
+				listComm.setCocktail_no(rs.getInt("cocktail_no"));
 				list.add(listComm);
 			}
 		} catch (Exception ex) {
@@ -46,18 +45,18 @@ public class ListCommDao {
 		return list;
 	}
 	
-	public boolean insertComm(CockListComm cockListComm){
+	public boolean insertComm(CocktailComm cocktailComm){
 		boolean flag = false;
 		Connection conn = null;
 		PreparedStatement ps = null;
-		String sql="insert into cocklist_comm(no, cocklist_no, id, content) "
+		String sql="insert into cocktail_comm(no, cocktail_no, id, content) "
 				+ "values(cocklist_comm_seq.nextval,?,?,?)";
 		try{
 			conn = DBconn.getConnection();
 			ps=conn.prepareStatement(sql);
-			ps.setInt(1, cockListComm.getCocklist_no());
-			ps.setString(2,cockListComm.getId());
-			ps.setString(3, cockListComm.getContent());
+			ps.setInt(1, cocktailComm.getCocktail_no());
+			ps.setString(2, cocktailComm.getId());
+			ps.setString(3, cocktailComm.getContent());
 			int n=ps.executeUpdate();
 			if(n==1) {
 				flag=true;

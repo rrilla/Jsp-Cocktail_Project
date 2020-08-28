@@ -56,7 +56,7 @@ public class CockDao {
 			Connection conn = null;
 			PreparedStatement ps = null;
 			ResultSet rs = null;
-			String sql = "select no,name,ename,img_name,base,ingredient,technique,glass,garnish,recipe,tmi,taste,isacid from cocktail where no=?";
+			String sql = "select no,name,ename,img_name,base,ingredient,technique,glass,garnish,recipe,tmi,taste,isacid,url from cocktail where no=?";
 			try {
 				conn = DBconn.getConnection();
 				ps = conn.prepareStatement(sql);
@@ -74,8 +74,9 @@ public class CockDao {
 					cock.setGarnish(rs.getString("garnish"));
 					cock.setRecipe(rs.getString("recipe"));
 					cock.setTmi(rs.getString("tmi"));
-					cock.setTaste(rs.getInt("taste"));
+					cock.setTaste(rs.getString("taste"));
 					cock.setIsAcid(rs.getInt("isacid"));
+					cock.setUrl(rs.getString("url"));
 				}
 
 			} catch (Exception ex) {
@@ -169,47 +170,18 @@ public class CockDao {
 			return list;
 		}
 		
-		
-		public List<Cocktail> searchAbv(int abv){
+		public List<Cocktail> searchTaste(int abv, int color, int taste){
 			List<Cocktail> list = new ArrayList<Cocktail>();
 			Connection conn = null;
 			PreparedStatement ps = null;
 			ResultSet rs = null;
-			String sql = "select no,name,ename,img_name,base,isacid from cocktail where abv like ?";
-			try {
-				conn = DBconn.getConnection();
-				ps = conn.prepareStatement(sql);
-				ps.setString(1, "%"+abv+"%");
-				rs = ps.executeQuery();
-				while(rs.next()) {
-					Cocktail cock = new Cocktail();
-					cock.setNo(rs.getInt("no"));
-					cock.setName(rs.getString("name"));
-					cock.setEname(rs.getString("ename"));
-					cock.setBase(rs.getString("base"));
-					cock.setImg_name(rs.getString("img_name"));
-					cock.setIsAcid(rs.getInt("isacid"));
-					list.add(cock);
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			} finally {
-				DBconn.close(conn, ps, rs);
-			}
-			return list;
-		}
-		
-		public List<Cocktail> searchColor(int abv, int color){
-			List<Cocktail> list = new ArrayList<Cocktail>();
-			Connection conn = null;
-			PreparedStatement ps = null;
-			ResultSet rs = null;
-			String sql = "select no,name,ename,img_name,base,isacid from cocktail where abv like ? and color like ?";
+			String sql = "select no,name,ename,img_name,base,isacid from cocktail where abv like ? and color like ? and taste like ?";
 			try {
 				conn = DBconn.getConnection();
 				ps = conn.prepareStatement(sql);
 				ps.setString(1, "%"+abv+"%");
 				ps.setString(2, "%"+color+"%");
+				ps.setString(3, "%"+taste+"%");
 				rs = ps.executeQuery();
 				while(rs.next()) {
 					Cocktail cock = new Cocktail();

@@ -11,13 +11,13 @@ public class Cocktail {
 	private String technique;
 	private String glass;
 	private int isAcid;
-	private int temp;
+	private String temp;
 	private String garnish;
 	private String recipe;
 	private String tmi;
-	private int abv;
-	private int taste;
-	private int color;
+	private String abv;
+	private String taste;
+	private String color;
 	private String url;
 	
 	public Cocktail() {}
@@ -102,11 +102,11 @@ public class Cocktail {
 		this.isAcid = isAcid;
 	}
 
-	public int getTemp() {
+	public String getTemp() {
 		return temp;
 	}
 
-	public void setTemp(int temp) {
+	public void setTemp(String temp) {
 		this.temp = temp;
 	}
 
@@ -134,27 +134,27 @@ public class Cocktail {
 		this.tmi = tmi;
 	}
 
-	public int getAbv() {
+	public String getAbv() {
 		return abv;
 	}
 
-	public void setAbv(int abv) {
+	public void setAbv(String abv) {
 		this.abv = abv;
 	}
 
-	public int getTaste() {
+	public String getTaste() {
 		return taste;
 	}
 
-	public void setTaste(int taste) {
+	public void setTaste(String taste) {
 		this.taste = taste;
 	}
 
-	public int getColor() {
+	public String getColor() {
 		return color;
 	}
 
-	public void setColor(int color) {
+	public void setColor(String color) {
 		this.color = color;
 	}
 

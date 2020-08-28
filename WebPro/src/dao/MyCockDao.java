@@ -23,7 +23,7 @@ public class MyCockDao {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sql = "select m.id, c.no, c.img_name, c.name, c.base from member_mycock m,cocklist c where id=? and m.cocklist_no = c.no";
+		String sql = "select m.id, c.no, c.img_name, c.name, c.base from member_mycock m,cocktail c where id=? and m.cocktail_no = c.no";
 		try {
 			conn = DBconn.getConnection();
 			ps = conn.prepareStatement(sql);
@@ -53,7 +53,7 @@ public class MyCockDao {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sql = "select * from member_mycock where id=? and cocklist_no=?";
+		String sql = "select * from member_mycock where id=? and cocktail_no=?";
 		try {
 			conn = DBconn.getConnection();
 			ps = conn.prepareStatement(sql);
@@ -75,7 +75,7 @@ public class MyCockDao {
 		boolean flag = false;
 		Connection conn = null;
 		PreparedStatement ps = null;
-		String sql = "insert into member_mycock(id, cocklist_no) values(?, ?)";
+		String sql = "insert into member_mycock(id, cocktail_no) values(?, ?)";
 		try {
 			conn = DBconn.getConnection();
 			ps = conn.prepareStatement(sql);
@@ -97,7 +97,7 @@ public class MyCockDao {
 		boolean flag = false;
 		Connection conn = null;
 		PreparedStatement ps = null;
-		String sql = "delete from member_mycock where id=? and cocklist_no=?";
+		String sql = "delete from member_mycock where id=? and cocktail_no=?";
 		try {
 			conn = DBconn.getConnection();
 			ps = conn.prepareStatement(sql);

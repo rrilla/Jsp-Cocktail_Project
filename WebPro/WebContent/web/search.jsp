@@ -10,7 +10,7 @@
 		bottom: 0px;
 		left: 0px;
 		z-index: 1000; 
-		background: black;
+		background: red;
 		opacity: 1;
 	}
 	
@@ -66,7 +66,7 @@ input[type=range] {
 	border: 0.2px solid #010101;
 }
 </style>
-
+	<!-- 도수는 표준레시피 기준으로 계산,맛은 다포함되더라도 가장 강한맛을 기준으로 분류,,맛은 주관적이라 참고용으로만  -->
      <!-- ##### Breadcumb Area Start ##### -->
     <section class="breadcumb-area bg-img bg-overlay" style="background-image: url(../img/web-img/main-back4-2.jpg);">
         <div class="bradcumbContent">
@@ -77,28 +77,11 @@ input[type=range] {
     <!-- ##### Breadcumb Area End ##### -->
 
     <!-- ##### Events Area Start ##### -->
-    <section class="events-area section-padding-100">
+    <section class="events-area section-padding-100-0">
         <div class="container">
-            <div class="row">
+            <div class="row oneMusic-albums" id=searchList>
 
-                <!-- Single Event Area -->
-                <c:forEach items="${list }" var="cocktail">
-                <div class="col-12 col-md-6 col-lg-4">
-                    <div class="single-event-area mb-30">
-                        <div class="event-thumbnail">
-                            <img src="../img/web-img/${cocktail.img_name }" alt="">
-                        </div>
-                        <div class="event-text">
-                            <h4>${cocktail.name }</h4>
-                            <div class="event-meta-data">
-                                <a href="#" class="event-place">${cocktail.base }</a>
-                                <a href="#" class="event-date">${cocktail.alike }</a>
-                            </div>
-                            <a href="#" class="btn see-more-btn">상세보기</a>
-                        </div>
-                    </div>
-                </div>
-                </c:forEach>
+                
 
             </div>
 
@@ -115,63 +98,118 @@ input[type=range] {
         
         <div class="searchbar">
         	<div class="category" >
-        		<span id="abv0"> 무알콜 </span>
-        		<span id="abv1"> 0~15 </span>
-        		<span id="abv2"> 15~30 </span>
-        		<span id="abv3"> 30 이상 </span>
+        		<input type="radio" name="abv" onclick="abvCE(9);" >선택해제
+        		<input type="radio" name="abv" onclick="abvCE(0);" >무알콜 
+        		<input type="radio" name="abv" onclick="abvCE(1);" >0~15 
+        		<input type="radio" name="abv" onclick="abvCE(2);" >15~30 
+        		<input type="radio" name="abv" onclick="abvCE(3);" >30도이상 
         	</div>
         	<div class="category">
-        		<span id="cWhite"> 화이트 </span>
-        		<span id="cBlack"> 블랙 </span>
-        		<span id="cRed"> 레드 </span>
-        		<span id="cYellow"> 옐로우 </span>
-        		<span id="cBlue"> 블루 </span>
-        		<span id="cGreen"> 그린 </span>
-        		<span id="cMix"> 믹스 </span>
+        	<form >
+        		<input type="radio" name="color" onclick="colorCE(9);" >선택해제
+        		<input type="radio" name="color" onclick="colorCE(0);" >흰색
+        		<input type="radio" name="color" onclick="colorCE(1);" >검정,검붉은
+        		<input type="radio" name="color" onclick="colorCE(2);" >빨강
+        		<input type="radio" name="color" onclick="colorCE(3);" >노랑
+        		<input type="radio" name="color" onclick="colorCE(4);" >파랑
+        		<input type="radio" name="color" onclick="colorCE(5);" >초록 
+        		<input type="radio" name="color" onclick="colorCE(6);" >혼합 
+        	</form>
         	</div>
         	<div class="category">
-        		<input type="checkbox" class="input-chek" name="base" id="lum" value="lum"><label for="lum" class="form-chek">럼</label>
-				<input type="checkbox" class="input-chek" name="base" id="vodka" value="vodka"><label for="vodka" class="form-chek">보드카</label>
-        		<input type="checkbox" class="input-chek" name="base" id="jin" value="jin"><label for="jin" class="form-chek">진</label>
+        	<form >
+        		<input type="radio" name="taste" onclick="tasteCE(9);" >선택해제
+        		<input type="radio" name="taste" onclick="tasteCE(0);" >스위트(단맛)
+        		<input type="radio" name="taste" onclick="tasteCE(1);" >사워(신맛,상큼)
+        		<input type="radio" name="taste" onclick="tasteCE(2);" >드라이(도수높고 드라이,쓴맛)
+        		<input type="radio" name="taste" onclick="tasteCE(4);" >탄산
+        		<input type="radio" name="taste" onclick="tasteCE(3);" >기타
+        	</form>
         	</div>
         	        	        	
         </div>
     </section>
    			
 <script type="text/javascript">
-var abv;
-var color;
-var taste;
 
-//0도 무알콜 클릭시
-	$("#abv0").on('click', function(){
+var abv=9;
+var color=9;
+var taste=9;
+
+	$(document).ready(function(){
 		$.ajax({
 			type:"post",
-			url:"test.do",
-			data:{"abv":"2"},
+			url:"searchTaste.do",
+			data:{"abv":abv, "color":color, "taste":taste},
 			success:function(data,textStatus){
-				abv = 2;
-				console.log(data);
-				console.log(abv);
+				getList(data);
 			}, error:function(data,textStatus){
 				alert("error");
 			}, complete:function(data,textStatus){}
 		});
 	});
+
+	function abvCE(a) {
+		$.ajax({
+			type:"post",
+			url:"searchTaste.do",
+			data:{"abv":a, "color":color, "taste":taste},
+			success:function(data,textStatus){
+				abv = a;
+				getList(data);
+			}, error:function(data,textStatus){
+				alert("error");
+			}, complete:function(data,textStatus){}
+		});
+	}
 	
-	$("#cWhite").on('click', function(){
+	function colorCE(a) {
 		$.ajax({
 			type:"post",
-			url:"test2.do",
-			data:{"color":"1", "abv":abv},
+			url:"searchTaste.do",
+			data:{"abv":abv, "color":a, "taste":taste},
 			success:function(data,textStatus){
-				var color = 1;
-				console.log(data);
+				color = a;
+				getList(data);
 			}, error:function(data,textStatus){
 				alert("error");
 			}, complete:function(data,textStatus){}
 		});
-	});
+	}
+	
+	function tasteCE(a) {
+		$.ajax({
+			type:"post",
+			url:"searchTaste.do",
+			data:{"abv":abv, "color":color, "taste":a},
+			success:function(data,textStatus){
+				taste = a;
+				getList(data);
+			}, error:function(data,textStatus){
+				alert("error");
+			}, complete:function(data,textStatus){}
+		});
+	}
+	
+	function getList(list) {
+		var str = '';
+		
+		for(let cocktail of list){
+			str += '<div class="col-12 col-sm-4 col-md-3 col-lg-2 single-album-item ' + cocktail.f_letter + '">';
+			str += '<div class="single-album">';
+			str += '<a href="detail.do?no=' + cocktail.no + '">';
+			str += '<img src="img/cock-img/' + cocktail.img_name + '" alt="">';
+			str += '<div class="album-info">'
+			str += '<h5>' + cocktail.name + '</h5>';
+			str += '<h6>(' + cocktail.ename + ')</h6>'
+			str += '<p>' + cocktail.base + '</p>'
+			str += '</div>'
+			str += '</a>'
+			str += '</div>'
+			str += '</div>'
+		}
+		$("#searchList").html(str);
+	};
 
 </script>
 
