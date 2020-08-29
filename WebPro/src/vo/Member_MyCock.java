@@ -7,6 +7,7 @@ public class Member_MyCock {
 	private int no;
 	private String img_name;
 	private String name;
+	private String ename;
 	private String base;
 	private Date add_date;
 	
@@ -25,13 +26,22 @@ public class Member_MyCock {
 		this.add_date = add_date;
 	}
 	
-	public Member_MyCock(String id, int no, String img_name, String name, String base) {
+	public Member_MyCock(String id, int no, String img_name, String name, String ename, String base) {
 		super();
 		this.id = id;
 		this.no = no;
 		this.img_name = img_name;
 		this.name = name;
+		this.ename = ename;
 		this.base = base;
+	}
+
+	public String getEname() {
+		return ename;
+	}
+
+	public void setEname(String ename) {
+		this.ename = ename;
 	}
 
 	public String getId() {

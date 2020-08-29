@@ -22,7 +22,7 @@ public class CockCommDao {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sql = "select m.nickname, m.img_name, c.id, c.content, c.cocktail_no from member m, cocktail_comm c where c.cocktail_no = ?";
+		String sql = "select m.nickname, m.img_name, c.id, c.content, c.cocktail_no from member m, cocktail_comm c where c.id = m.id and c.cocktail_no = ?";
 		try {
 			conn = DBconn.getConnection();
 			ps = conn.prepareStatement(sql);

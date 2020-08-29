@@ -50,41 +50,6 @@
     }
 </style>
 <script src="js/jquery/jquery-3.5.1.min.js"></script>
-<script type="text/javascript">
-
-	/* (function(){
-		$.ajax({
-			type:"request",
-			url:"test.do",
-			async:false,
-			success:function(data,textStatus){
-				alert("ok")
-			},error:function(data,textStatus){
-				alert("error")
-			},complete:function(data,textStatus){}
-		});
-	}); */
-	
-	<%-- <%!
-	String data;
-	String[] cockData;
-	String rName;
-%>
-<%
-	Cookie[] cookies = request.getCookies();
-	
-	
-	for(int i=0; i<cookies.length; i++) {
-		if(cookies[i].getName().equals("cNameList")){
-			data = cookies[i].getValue();
-			cockData = data.split(",");
-		}
-	}
-	rName = cockData[(int)(Math.random()*cockData.length)];
-	request.setAttribute("rName", rName);
-%> --%> 
-
-</script>
 	
 </head>
 <body>
@@ -127,10 +92,9 @@
                             <div class="classynav">
                             	<form action="search.do" method="post">
 	                                <ul>
-	                                    	<li><input type="text" id="cockName" class="searchBar" name="cName" value="${rName }"><!-- placeholder는 임의의 값 보일 수 있게 함 --></li>
-	                                    	<!-- <li><a href="#" id="searchBtn" class="btn oneMusic-btn btn-2 m-2" style="margin-top:5px;">Send <i class="fa fa-angle-double-right"></i></a></li> -->
-	                                    	<li><input type="submit" id="searchBtn" class="btn oneMusic-btn btn-2 m-2" value="search" ></li>
-	                                    </form>
+	                                    <li><input type="text" id="cockName" class="searchBar" name="cName" value="${rName }"><!-- placeholder는 임의의 값 보일 수 있게 함 --></li>
+	                                    <!-- <li><a href="#" id="searchBtn" class="btn oneMusic-btn btn-2 m-2" style="margin-top:5px;">Search <i class="fa fa-angle-double-right"></i></a></li> -->
+	                                    <li><input type="submit" id="searchBtn" class="btn oneMusic-btn btn-2 m-2" value="search" ></li>
 	                               </ul>
 	                            </form>
 
@@ -180,7 +144,7 @@
 			         }
 			     });
 			});
-		
+			
 		</script>       
         
     </header>

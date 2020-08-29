@@ -2,6 +2,7 @@ package controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.ProcessBuilder.Redirect;
 import java.util.List;
 import java.util.Properties;
 
@@ -57,7 +58,7 @@ public class BoardServlet extends HttpServlet {
 		
 		if(action.equals("p_main.do")) {
 			request.getRequestDispatcher("web/main.jsp").forward(request, response);
-			
+		
 		}else if(action.equals("p_login.do")) {
 			request.getRequestDispatcher("web/login.jsp").forward(request, response);
 			
@@ -67,6 +68,7 @@ public class BoardServlet extends HttpServlet {
 		}else if(action.equals("p_tasteSearch.do")) {
 			request.getRequestDispatcher("web/search.jsp").forward(request, response);
 			
+			//로그인
 		}else if(action.equals("login.do")) {
 			String id=request.getParameter("id");
 			String pw=request.getParameter("pw");
@@ -75,45 +77,44 @@ public class BoardServlet extends HttpServlet {
 			if(n==1) {
 				System.out.println(id + " 님이 로그인 하심.");
 				HttpSession session=request.getSession();
+				Member member = MemberDao.getInstance().SelectOne(id);
 				session.setAttribute("session_id", id);
-				session.setAttribute("session_nickname", MemberDao.getInstance().SelectOne(id).getNickname());
+				session.setAttribute("session_nickname", member.getNickname());
+				session.setAttribute("session_img_name", member.getImg_name());
 			}
 			
+			//로그아웃
 		}else if(action.equals("logout.do")) {
 			HttpSession session=request.getSession();
 			System.out.println(session.getAttribute("session_id") + " 님이 로그아웃 하심.");
 			session.removeAttribute("session_id");
-			request.getRequestDispatcher("p_main.do").forward(request, response);
+			String url = request.getHeader("referer");
+			response.sendRedirect(url);
 		
-		//아이디(이메일) 중복확인 클릭시
+		//아이디(이메일) 중복확인
 		}else if(action.equals("overappedId.do")) {
 			String id = request.getParameter("id");
 			int n = MemberDao.getInstance().overappedId(id);
 			writer.print(n);
 			
-		//인증번호 발송 클릭시
+		//닉네임 중복확인
+		}else if(action.equals("overappedNname.do")) {
+			String nickname = request.getParameter("nickname");
+			int n = MemberDao.getInstance().overappedNname(nickname);
+			writer.print(n);
+			
+		//메일 인증번호 발송 클릭시
 		}else if(action.equals("authNumSend.do")) {
 			String email = request.getParameter("email");
-			authNum = RandomNum();
+			String authNum = RandomNum();
 			sendEmail(email, authNum);
 			if(mailAdressCheck) {
-				//writer.print("1");
 				writer.print(authNum);
-				request.setAttribute("authNum", authNum);
 				System.out.println("'" + email + "' 으로 인증메일 전송함.");
 			}else {
 				writer.print("0");
 			}
 			
-		//인증번호 확인 클릭시
-		}else if(action.equals("authNumCheck.do")) {
-			String inputAuthNum = request.getParameter("authNum");
-			if(inputAuthNum.equals(authNum)) {
-				writer.print('1');
-			}else {
-				writer.print('0');
-			}
-		
 		//회원가입 버튼 클릭시
 		}else if(action.equals("join.do")) {
 			String id = request.getParameter("email");
@@ -129,6 +130,7 @@ public class BoardServlet extends HttpServlet {
 				HttpSession session = request.getSession();
 				session.setAttribute("session_id", id);
 				session.setAttribute("session_nickname", nickname);
+				session.setAttribute("session_img_name", img_name);
 				System.out.println(id + "님이 회원가입 하심.");
 				writer.print("<script>location.href='p_main.do';</script>");
 			}else {
@@ -138,9 +140,10 @@ public class BoardServlet extends HttpServlet {
 		//마이페이지 이동
 		}else if(action.equals("mypage.do")) {
 			String id = (String)request.getSession().getAttribute("session_id");
-			List<Member_MyCock> myList = MyCockDao.getInstance().selectAll(id);
-			request.setAttribute("myList", myList);
-			request.getRequestDispatcher("web/mypage.jsp").forward(request, response);
+	        List<Cocktail> myList = MyCockDao.getInstance().selectAll(id);
+	        //request.setAttribute("num", myList.size());
+	        request.setAttribute("myList", myList);
+	        request.getRequestDispatcher("web/mypage.jsp").forward(request, response);
 			
 		//이름으로 검색버튼 클릭시
 		}else if(action.equals("search.do")) {

@@ -209,7 +209,7 @@
 						
 								<div class="newsletter-area mb-100">
 									<div class="section-heading text-left mb-50">
-										<img src="img/member-img/bascMember.jpg" alt="" />
+										<img src="img/member-img/${session_img_name }" alt="" />
 										<h2 >${session_nickname }</h2>
 									</div>
 									<div class="newsletter-form">
@@ -269,7 +269,6 @@
 			data:{"no": $("#addMyCockNo").val()},
 			success:function(data,textStatus){
 				getList(data);
-				console.log(data);
 			}, error:function(data,textStatus){
 				alert("error");
 			}, complete:function(data,textStatus){}
@@ -289,7 +288,7 @@
 				else if(data == '1'){
 					alert("삭제 완료");
 				}else if(data == '-1'){
-					alert("로그인 후 가능합니다.");
+					alert("서버 에러.");
 				}
 			}, error:function(data,textStatus){
 				alert("error");

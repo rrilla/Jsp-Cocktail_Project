@@ -37,7 +37,7 @@ public class MemberDao {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sql = "select nickname from member where id=?";
+		String sql = "select nickname,img_name from member where id=?";
 		try {
 			conn = DBconn.getConnection();
 			ps = conn.prepareStatement(sql);
@@ -45,6 +45,7 @@ public class MemberDao {
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				member.setNickname(rs.getString("nickname"));
+				member.setImg_name(rs.getString("img_name"));
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -81,7 +82,7 @@ public class MemberDao {
 		}
 		return flag;
 	}
-
+	
 	public int overappedId(String id) {
 		int n = -1;
 		Connection conn = null;
@@ -92,6 +93,32 @@ public class MemberDao {
 			conn = DBconn.getConnection();
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, id);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				n = 1;
+				System.out.println("ID OVERRAPPED");
+			} else {
+				n = 0;
+				System.out.println("ID AVAILABLE");
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			DBconn.close(conn, ps, rs);
+		}
+		return n;
+	}
+	
+	public int overappedNname(String nickname) {
+		int n = -1;
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		String sql = "select * from member where nickname=?";
+		try {
+			conn = DBconn.getConnection();
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, nickname);
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				n = 1;
@@ -180,5 +207,6 @@ public class MemberDao {
 		}
 		return flag;
 	}
+
 
 }

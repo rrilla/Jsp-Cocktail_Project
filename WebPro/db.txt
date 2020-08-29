@@ -52,7 +52,7 @@ url varchar2(300)
 
 create table member_mycock(     --member(회원)별 저장된 칵테일 저장 테이블
 id varchar2(30) not null,
-cocktail_no number not null, unique(cocktail_no),
+cocktail_no number not null,
 add_date date default sysdate,   --추가일(마이페이지 저장된 칵테일 배치 순서 정렬용도)
 constraint mycock_id_fk foreign key(id) REFERENCES member(id),
 constraint mycock_no_fk foreign key(cocktail_no) REFERENCES cocktail(no)

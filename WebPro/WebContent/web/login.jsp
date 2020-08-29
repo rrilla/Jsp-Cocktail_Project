@@ -20,15 +20,15 @@
                         <h3>Welcome Back</h3>
                         <!-- Login Form -->
                         <div class="login-form">
-                            <form action="#" method="post">
+                            <form name="login" action="login.do" method="post">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">I D</label>
-                                    <input type="text" id="id" class="form-control" aria-describedby="emailHelp" placeholder="Enter ID">
+                                    <input type="text" id="id" name="id" class="form-control" aria-describedby="emailHelp" placeholder="아이디 (이메일 형식 : test@xxxx.com)">
                                     <small id="emailHelp" class="form-text text-muted"><i class="fa fa-lock mr-2"></i>We'll never share your email with anyone else.</small>
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputPassword1">Password</label>
-                                    <input type="password" id="pw" class="form-control" placeholder="Password">
+                                    <input type="password" id="pw" name="pw" class="form-control" placeholder="Password">
                                 </div>
                                 <button type=button id="btnLogin" class="btn oneMusic-btn mt-30">Login</button>
                                 <a href="p_join.do"><button type="button" class="btn oneMusic-btn mt-30">Register</button></a>
@@ -45,27 +45,42 @@
 
 //로그인
     $("#btnLogin").on('click',function(){
-	var query={"id":$("#id").val(), "pw":$("#pw").val()};
-		$.ajax({
-			type:"post",
-			url:"login.do",
-			async:false,
-			data:query,
-			dataType:"text",
-			success:function(data,textStatus){
-				if(data==1){
-					alert("success");
-					location.href="mypage.do";
-				}else if(data==0){
-					alert("password error")
-				}else{
-					alert("id error")
+    	if(validate()){
+			$.ajax({
+				type:"post",
+				url:"login.do",
+				async:false,
+				data:{"id":$("#id").val(), "pw":$("#pw").val()},
+				dataType:"text",
+				success:function(data,textStatus){
+					if(data==1){
+						alert("success");
+						location.href=document.referrer;
+					}else if(data==0){
+						alert("password error")
+					}else{
+						alert("id error")
+					}
+				},error:function(data,textStatus){
+					alert("서버 에러.")
 				}
-			},error:function(data,textStatus){
-				alert("error")
-			}
-		});
+			});
+    	}
 	});
+	
+    function validate() {
+		if(login.id.value=="") {
+			alert("아이디를 입력해 주세요.");
+			login.id.focus();
+			return false;
+		}
+		if(login.pw.value=="") {
+			alert("비밀번호를 입력해 주세요.");
+			login.pw.focus();
+			return false;
+		}
+		return true;
+    }
     
 </script>
     

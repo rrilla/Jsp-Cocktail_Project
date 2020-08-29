@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import vo.Cocktail;
 import vo.Member;
 import vo.Member_MyCock;
 
@@ -18,26 +19,27 @@ public class MyCockDao {
 		return instance;
 	}
 	
-	public List<Member_MyCock> selectAll(String id) {
-		List<Member_MyCock> list = new ArrayList<Member_MyCock>();
+	public List<Cocktail> selectAll(String id) {
+		List<Cocktail> list = new ArrayList<Cocktail>();
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sql = "select m.id, c.no, c.img_name, c.name, c.base from member_mycock m,cocktail c where id=? and m.cocktail_no = c.no";
+		String sql = "select m.id, c.no, c.name, c.ename, c.f_letter, c.img_name, c.base, c.isacid from member_mycock m,cocktail c where id=? and m.cocktail_no = c.no";
 		try {
 			conn = DBconn.getConnection();
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, id);
 			rs = ps.executeQuery();
 			while(rs.next()) {
-				Member_MyCock myCock = new Member_MyCock(
-						rs.getString("id"),
-						rs.getInt("no"),
-						rs.getString("img_name"),
-						rs.getString("name"),
-						rs.getString("base")
-						);
-				list.add(myCock);
+				Cocktail cock = new Cocktail();
+				cock.setNo(rs.getInt("no"));
+				cock.setName(rs.getString("name"));
+				cock.setEname(rs.getString("ename"));
+				cock.setF_letter(rs.getString("f_letter"));
+				cock.setImg_name(rs.getString("img_name"));
+				cock.setBase(rs.getString("base"));
+				cock.setIsAcid(rs.getInt("isacid"));
+				list.add(cock);
 			}
 
 		} catch (Exception ex) {

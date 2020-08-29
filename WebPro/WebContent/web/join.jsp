@@ -62,7 +62,7 @@ input[type=range] {
 				<div class="contact-form-area">
 					<div class="row mb-50">
 						<div class="col-6"></div>
-						<h5>필수 입력</h5>
+						<h5></h5>
 					</div>
 					<div class="row">
 						<div class="col-4"></div>
@@ -73,13 +73,13 @@ input[type=range] {
 						</div>
 					</div>
 					<div class="row mb-30">
-						<div class="col-7"></div>
-						<div class="col-md-2" id="msg"></div>
+						<div class="col-5"></div>
+						<div class="col-md-4" id="msg"></div>
 						<div class="col-md-2">
 							<button type="button" id="btnEmailSend" class="btn">인증번호 발송</button>
 						</div>
 					</div>
-					<div class="row mb-30">
+					<div class="row">
 						<div class="col-4"></div>
 						<div class="col-md-6">
 							<div class="form-group wow fadeInUp" data-wow-delay="100ms">
@@ -104,7 +104,7 @@ input[type=range] {
 							</div>
 						</div>
 					</div>
-					<div class="row mb-30">
+					<div class="row">
 						<div class="col-4"></div>
 						<div class="col-md-6">
 							<div class="form-group wow fadeInUp" data-wow-delay="100ms">
@@ -112,6 +112,11 @@ input[type=range] {
 									placeholder="NickName">
 							</div>
 						</div>
+					</div>
+					<div class="row mb-30">
+						<div class="col-5"></div>
+						<div class="col-md-4" id="msg2"></div>
+						<div class="col-md-2"></div>
 					</div>
 					<div class="row mb-30">
 						<div class="col-4"></div>
@@ -202,8 +207,6 @@ input[type=range] {
 				</div>
 			</div>
 		</div>
-	</section>
-	<section >
 		<div style="text-align: center;">
 			<button class="btn oneMusic-btn mt-20" type="submit" id="btnJoin">
 				JOIN<i class="fa fa-angle-double-right"></i>
@@ -217,12 +220,17 @@ input[type=range] {
 var test = null;
 var checkEmail;
 var checkNum;
+var checkNname;
 
+//id(email)입력, 중복검사
 	$('#email').focusout(function () {
 		var re2 = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
 		// 이메일이 적합한지 검사할 정규식
 		var email = document.getElementById("email");
-	       if(!check2(re2, email, "적합하지 않은 이메일 형식입니다.")) {
+		if(join.email.value==""){
+			$("#msg").html("아이디를 입력해 주세요.");
+			return false;
+		}else if(!check2(re2, email, "적합하지 않은 이메일 형식입니다.")) {
 	    	   checkEmail = 0;
 	           return false;
 	       }
@@ -241,7 +249,34 @@ var checkNum;
 					checkEmail = 0;
 				}
 			}, error:function(data,textStatus){
-				alert("error");
+				alert("서버 에러");
+			}
+		});
+	});
+	
+//nickname 입력, 중복검사	
+	$('#nickname').focusout(function () {
+		var nickname = document.getElementById("nickname");
+	       if(join.nickname.value=="") {
+	    	   $("#msg2").html("닉네임을 입력해 주세요.");
+				return false;
+	       }
+		$.ajax({
+			type:"post",
+			url:"overappedNname.do",
+			data:{"nickname":$("#nickname").val()},
+			dataType:"text",
+			success:function(data,textStatus){
+				if(data == '0'){
+					$("#msg2").html("사용 가능");
+					checkNname = 1;
+				}
+				else if(data == '1'){
+					$("#msg2").html("사용 불가능");
+					checkNname = 0;
+				}
+			}, error:function(data,textStatus){
+				alert("서버 에러");
 			}
 		});
 	});
@@ -280,9 +315,7 @@ var checkNum;
 	$("#btnAuthNumCheck").on('click', function(){
 		var inputAuthNum = $("#authNum").val();
 		var authNum = test;
-		console.log(inputAuthNum);
-		console.log(authNum);
-		if(!inputAuthNum){
+		if($("#authNum").val() == ""){
 			alert("인증번호를 입력하세요.");
 			return false;
 		}else if(inputAuthNum != authNum){
@@ -291,52 +324,9 @@ var checkNum;
 			return false;
 		}else if(inputAuthNum == authNum){
 			checkNum = 1;
-			alert("이메일 인증 성공");
+			alert("이메일 인증 성공.");
 		}
 	});
-	
-//인증번호 확인
-	/* $("#btnAuthNumCheck").on('click', function(){
-		var check = $("#authNum").val();
-		if(check == ""){
-			alert("인증번호를 입력하세요");
-			$("#authNum").focus();
-			return false;
-		}
-		$.ajax({
-			type:"post",
-			url:"authNumCheck.do",
-			data:{"authNum":$("#authNum").val()},
-			success:function(data,textStatus){
-				if(data == '1'){
-					alert("이메일 인증 성공");
-				}else{
-					alert("인증 번호가 다릅니다.");
-				}
-			},error:function(data,textStatus){
-				alert("시스템 에러.");
-			}
-		});
-	}); */
-
-	//비밀번호 검사
-	/* $('#pw_ck').focusout(function () {
-        var pwd1 = $("#pw").val();
-        var pwd2 = $("#pw_ck").val();
- 
-        if ( pwd1 != '' && pwd2 == '' ) {
-            null;
-        } else if (pwd1 != "" || pwd2 != "") {
-            if (pwd1 == pwd2) {
-            	$("#msg2").html("비밀번호 일치");
-            } else {
-            	$("#msg2").html("비밀번호 불일치");
-                alert("비밀번호가 일치하지 않습니다. 비밀번호를 재확인해주세요.");
-                $("#pw").val("");
-                $("#pw_ck").val("");
-            }
-        }
-    }); */
 	
 	//member 좋아하는 술 선택시 img 자동 추가
 	function autoImg(a) {
@@ -458,7 +448,6 @@ var checkNum;
 	
 	//회원가입 클릭시 유효성 검사
 	   function validate() {
-	       // 이메일이 적합한지 검사할 정규식
 	       var id = document.getElementById("id");
 	       var pw = document.getElementById("pw");
 	       var email = document.getElementById("email");
@@ -475,17 +464,22 @@ var checkNum;
 	           return false;
 	       }
 	       if(join.name.value=="") {
-	           alert("이름을 입력해 주세요");
+	           alert("이름을 입력해 주세요.");
 	           join.name.focus();
 	           return false;
 	       }
 	       if(join.nickname.value=="") {
-	           alert("닉네임을 입력해 주세요");
+	           alert("닉네임을 입력해 주세요.");
+	           join.nickname.focus();
+	           return false;
+	       }
+	       if(checkNname != '1'){
+	    	   alert("닉네임을 확인 해주세요.");
 	           join.nickname.focus();
 	           return false;
 	       }
 	       if(join.pw.value=="") {
-	           alert("비밀번호를 입력해 주세요");
+	           alert("비밀번호를 입력해 주세요.");
 	           join.pw.focus();
 	           return false;
 	       }
@@ -531,6 +525,50 @@ var checkNum;
 	       $("#msg").html(message);
 	       return false;
 	   }
+	   
+//인증번호 확인
+	/* $("#btnAuthNumCheck").on('click', function(){
+		var check = $("#authNum").val();
+		if(check == ""){
+			alert("인증번호를 입력하세요");
+			$("#authNum").focus();
+			return false;
+		}
+		$.ajax({
+			type:"post",
+			url:"authNumCheck.do",
+			data:{"authNum":$("#authNum").val()},
+			success:function(data,textStatus){
+				if(data == '1'){
+					alert("이메일 인증 성공");
+				}else{
+					alert("인증 번호가 다릅니다.");
+				}
+			},error:function(data,textStatus){
+				alert("시스템 에러.");
+			}
+		});
+	}); */
+
+	//비밀번호 검사
+	/* $('#pw_ck').focusout(function () {
+       var pwd1 = $("#pw").val();
+       var pwd2 = $("#pw_ck").val();
+
+       if ( pwd1 != '' && pwd2 == '' ) {
+           null;
+       } else if (pwd1 != "" || pwd2 != "") {
+           if (pwd1 == pwd2) {
+           	$("#msg2").html("비밀번호 일치");
+           } else {
+           	$("#msg2").html("비밀번호 불일치");
+               alert("비밀번호가 일치하지 않습니다. 비밀번호를 재확인해주세요.");
+               $("#pw").val("");
+               $("#pw_ck").val("");
+           }
+       }
+   }); */
+   
 </script>
 
 <%@ include file="../include/footer.jsp"%>
