@@ -46,6 +46,9 @@ input[type=range] {
 	border-radius: 1.3px;
 	border: 0.2px solid #010101;
 }
+#msg,#msg2{
+	color: red;
+}
 </style>
 <section class="breadcumb-area bg-img bg-overlay"
 	style="background-image: url(img/web-img/main-back4-2.jpg);">
@@ -331,14 +334,14 @@ var checkNname;
 	//member 좋아하는 술 선택시 img 자동 추가
 	function autoImg(a) {
 		switch(a){
-		case 1: $('#img_name').val('soju.jpg');break;
-		case 2: $('#img_name').val('beer.jpg');break;
-		case 3: $('#img_name').val('soju_beer.jpg');break;
-		case 4: $('#img_name').val('mak.jpg');break;
-		case 5: $('#img_name').val('wine.jpg');break;
-		case 6: $('#img_name').val('whiskey.jpg');break;
-		case 7: $('#img_name').val('sake.jpg');break;
-		default : $('#img_name').val('basic.jpg');
+		case 1: $('#img_name').val('soju.png');break;
+		case 2: $('#img_name').val('beer.png');break;
+		case 3: $('#img_name').val('soju_beer.png');break;
+		case 4: $('#img_name').val('mak.png');break;
+		case 5: $('#img_name').val('wine.png');break;
+		case 6: $('#img_name').val('whiskey.png');break;
+		case 7: $('#img_name').val('sake.png');break;
+		default : $('#img_name').val('basic.png');
 		}
 	}
 	

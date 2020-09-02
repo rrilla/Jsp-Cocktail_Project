@@ -96,10 +96,8 @@ public class MemberDao {
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				n = 1;
-				System.out.println("ID OVERRAPPED");
 			} else {
 				n = 0;
-				System.out.println("ID AVAILABLE");
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -122,10 +120,8 @@ public class MemberDao {
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				n = 1;
-				System.out.println("ID OVERRAPPED");
 			} else {
 				n = 0;
-				System.out.println("ID AVAILABLE");
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

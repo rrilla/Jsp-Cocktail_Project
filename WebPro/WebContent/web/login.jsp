@@ -3,7 +3,7 @@
     
 <%@ include file="../include/header2.jsp" %>
     <!-- ##### Breadcumb Area Start ##### -->
-    <section class="breadcumb-area bg-img bg-overlay" style="background-image: url(img/bg-img/breadcumb3.jpg);">
+    <section class="breadcumb-area bg-img bg-overlay" style="background-image: url(img/web-img/main-back4-2.jpg);">
         <div class="bradcumbContent">
             <p>See what’s new</p>
             <h2>Login / Register</h2>
@@ -23,7 +23,7 @@
                             <form name="login" action="login.do" method="post">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">I D</label>
-                                    <input type="text" id="id" name="id" class="form-control" aria-describedby="emailHelp" placeholder="아이디 (이메일 형식 : test@xxxx.com)">
+                                    <input type="text" id="id" name="id" class="form-control" aria-describedby="emailHelp" placeholder="ID(이메일 형식 : test@xxxx.com)">
                                     <small id="emailHelp" class="form-text text-muted"><i class="fa fa-lock mr-2"></i>We'll never share your email with anyone else.</small>
                                 </div>
                                 <div class="form-group">
@@ -57,9 +57,9 @@
 						alert("success");
 						location.href=document.referrer;
 					}else if(data==0){
-						alert("password error")
+						alert("password를 확인해주세요.")
 					}else{
-						alert("id error")
+						alert("id를 확인해주세요.")
 					}
 				},error:function(data,textStatus){
 					alert("서버 에러.")

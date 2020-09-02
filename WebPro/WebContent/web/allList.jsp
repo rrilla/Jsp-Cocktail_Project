@@ -3,7 +3,7 @@
 <%@ include file="../include/header2.jsp" %>
 
      <!-- ##### Breadcumb Area Start ##### -->
-    <section class="breadcumb-area bg-img bg-overlay" style="background-image: url(img/bg-img/breadcumb3.jpg);">
+    <section class="breadcumb-area bg-img bg-overlay" style="background-image: url(img/web-img/back3.jpg);">
         <div class="bradcumbContent">
             <p>saved</p>
             <h2>Cocktail List</h2>

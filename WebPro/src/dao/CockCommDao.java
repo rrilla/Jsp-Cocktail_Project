@@ -50,7 +50,7 @@ public class CockCommDao {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		String sql="insert into cocktail_comm(no, cocktail_no, id, content) "
-				+ "values(cocklist_comm_seq.nextval,?,?,?)";
+				+ "values(cocktail_comm_seq.nextval,?,?,?)";
 		try{
 			conn = DBconn.getConnection();
 			ps=conn.prepareStatement(sql);

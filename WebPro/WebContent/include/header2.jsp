@@ -22,12 +22,11 @@
     <!-- Stylesheet -->
     <link rel="stylesheet" href="style.css">
 
-
 <style>
 	.searchBar {
 	  margin-top: 4px;
 	  position: relative;
-	  z-index: 1;
+	  z-index: 1;0
 	  display: inline-block;
 	  min-width: 212px;
 	  height: 35px;
@@ -116,7 +115,7 @@
                                     <div class="cart-btn">
                                     <c:choose>
                                     	<c:when test="${not empty session_id }">
-                                        	<a href="mypage.do" ><p><span class="icon-shopping-cart"></span> <span class="quantity">1</span></p></a>
+                                        	<a href="mypage.do" title="마이 페이지"><p><span class="icon-inbox"></span> </p></a>
                                         </c:when>
                                         </c:choose>	
                                     </div>

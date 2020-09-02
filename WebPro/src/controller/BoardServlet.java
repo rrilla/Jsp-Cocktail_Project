@@ -66,7 +66,10 @@ public class BoardServlet extends HttpServlet {
 			request.getRequestDispatcher("web/join.jsp").forward(request, response);
 			
 		}else if(action.equals("p_tasteSearch.do")) {
-			request.getRequestDispatcher("web/search.jsp").forward(request, response);
+			CockDao cockDao=CockDao.getInstance();
+			List<Cocktail> list=cockDao.selectAll();
+			request.setAttribute("list", list);
+			request.getRequestDispatcher("web/searchOne.jsp").forward(request, response);
 			
 			//로그인
 		}else if(action.equals("login.do")) {
@@ -141,7 +144,7 @@ public class BoardServlet extends HttpServlet {
 		}else if(action.equals("mypage.do")) {
 			String id = (String)request.getSession().getAttribute("session_id");
 	        List<Cocktail> myList = MyCockDao.getInstance().selectAll(id);
-	        //request.setAttribute("num", myList.size());
+	        request.setAttribute("num", myList.size());
 	        request.setAttribute("myList", myList);
 	        request.getRequestDispatcher("web/mypage.jsp").forward(request, response);
 			
@@ -166,6 +169,17 @@ public class BoardServlet extends HttpServlet {
 			Cocktail cock = CockDao.getInstance().SelectOne(no);
 			List<Cocktail> relevant = CockDao.getInstance().relevantCock(cock.getBase(), no);
 			List<CocktailComm> listComm = CockCommDao.getInstance().selectAll(no);
+			String id = (String)request.getSession().getAttribute("session_id");
+			if(id != null) {
+				boolean flag = MyCockDao.getInstance().checkAdd(id, no);
+				if(flag) {
+						request.setAttribute("myCockImg", "0");
+				}else {
+						request.setAttribute("myCockImg", "1");
+				}
+			}
+			
+			
 			request.setAttribute("listComm", listComm);
 			request.setAttribute("cock", cock);
 			request.setAttribute("relevant", relevant);
