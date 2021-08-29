@@ -60,7 +60,8 @@ public class MemberDao {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		String sql = "insert into member(no,id,name,nickname,password,address,one_s,img_name) values(member_seq.nextval, ?, ?, ?, ?, ?, ?, ?)";
+//		String sql = "insert into member(no,id,name,nickname,password,address,one_s,img_name) values(member_seq.nextval, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "insert into member(no,id,name,nickname,password,address,one_s,img_name) values(nextval('member_seq'), ?, ?, ?, ?, ?, ?, ?)";
 		try {
 			conn = DBconn.getConnection();
 			ps = conn.prepareStatement(sql);
