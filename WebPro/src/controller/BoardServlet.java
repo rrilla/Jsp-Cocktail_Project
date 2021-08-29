@@ -257,7 +257,7 @@ public class BoardServlet extends HttpServlet {
     	String host = "smtp.gmail.com";				//smtp 서버
     	String subject = "JaeHyeon`s Web 인증번호 ";	//메일 제목
     	String fromName = "JaeHyeon`s Web 관리자";	//보내는 이
-    	String from = "rrilla01@gmail.com";			//보내는 메일
+    	String from = "dev.rrilla@gmail.com";		//보내는 메일
     	String to1 = email;
     	
     	String content = "재현이가 만든 웹사이트에<br>재현이가 요청해서<br>재현이가 보낸<br>재현이가 입력해야 할<br>재현이를 위한 인증번호는<br><h1>[" + authNum + "]</h1><br>입니다.";
@@ -285,7 +285,7 @@ public class BoardServlet extends HttpServlet {
     		Session session_mail = Session.getInstance(props,
     			new javax.mail.Authenticator() {
     				protected PasswordAuthentication getPasswordAuthentication() {
-    					return new PasswordAuthentication("rrilla01@gmail.com", "jh940520");
+    					return new PasswordAuthentication("dev.rrilla@gmail.com", "jh940520");
     				}
     			});
     		//session_mail.setDebug(true);	//디버깅
@@ -304,6 +304,7 @@ public class BoardServlet extends HttpServlet {
     		mailAdressCheck = false;
     	}catch(Exception e) {
     		e.printStackTrace();
+    		mailAdressCheck = false;
     	}
     }
     

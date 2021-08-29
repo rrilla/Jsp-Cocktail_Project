@@ -20,7 +20,7 @@ public class CockDao {
 			return instance;
 		}
 		
-		//ÀüÃ¼¸®½ºÆ®¿¡ °¡Á®¿Ã µ¥ÀÌÅÍ
+		//ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		public List<Cocktail> selectAll(){
 			List<Cocktail> list = new ArrayList<Cocktail>();
 			Connection conn = null;
@@ -50,7 +50,7 @@ public class CockDao {
 			return list;
 		}
 		
-		//»ó¼¼Á¤º¸½Ã °¡Á®¿Ã µ¥ÀÌÅÍ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		public Cocktail SelectOne(int no){
 			Cocktail cock = new Cocktail();
 			Connection conn = null;
@@ -87,7 +87,7 @@ public class CockDao {
 			return cock;
 		}
 		
-		//¿¬°üÄ¬Å×ÀÏ °¡Á®¿Ã µ¥ÀÌÅÍ
+		//ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		public List<Cocktail> relevantCock(String base,int no){
 			List<Cocktail> list = new ArrayList<Cocktail>();
 			Connection conn = null;
@@ -114,7 +114,7 @@ public class CockDao {
 			return list;
 		}
 		
-		//ÀÌ¸§ °Ë»ö °¡Á®¿Ã µ¥ÀÌÅÍ
+		//ï¿½Ì¸ï¿½ ï¿½Ë»ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		public List<Cocktail> searchName(String cName){
 			List<Cocktail> list = new ArrayList<Cocktail>();
 			Connection conn = null;
@@ -128,7 +128,7 @@ public class CockDao {
 				rs = ps.executeQuery();
 //				int n = ps.executeUpdate();
 //				if(n == 0) {
-//					System.out.println("ÀÌ¸§°Ë»ö°á°ú ¾øÀ½");
+//					System.out.println("ï¿½Ì¸ï¿½ï¿½Ë»ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
 //				}
 				while(rs.next()) {
 					Cocktail cock = new Cocktail();
@@ -148,7 +148,7 @@ public class CockDao {
 			return list;
 		}
 		
-		//°Ë»öÃ¢¿¡ ·£´ýÀ¸·Î ¶ç¿ï ÀÌ¸§ °¡Á®¿À±â
+		//ï¿½Ë»ï¿½Ã¢ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		public List<String> rName(){
 			List<String> list = new ArrayList<String>();
 			Connection conn = null;
