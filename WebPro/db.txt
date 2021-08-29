@@ -1,0 +1,383 @@
+--------------------------------------------------------system 
+create user web identified by 1234;     --새유저 생성
+
+grant connect, resource, dba to web;    --유저에 권한부여
+
+--------------------------------------------------------web
+--------------sequence 생성
+create sequence member_seq      --시퀀스생성
+nocache;                        --시퀀스를 빨리 제공하기 위해 메모리에 캐쉬 하는 갯수
+create sequence cock_seq
+nocache;
+create sequence cocktail_comm_seq
+nocache;
+create sequence content_seq
+nocache;
+create sequence content_comm_seq
+nocache;
+
+
+--------------테이블 생성
+create table member(    --member(회원가입시 회원정보 저장, 로그인 유효성검사) 테이블 생성
+no number primary key,
+id varchar2(30) not null, unique(id),
+name varchar(30) not null,
+nickname varchar(30) not null, unique(nickname),
+password varchar2(30) not null,
+address varchar2(50) not null,
+one_s varchar2(30),
+img_name varchar2(50) default 'basic.jpg'
+); 
+
+create table cocktail(
+no number primary key,
+name varchar2(60) not null, unique(name),
+ename varchar2(60) not null, unique(ename),
+f_Letter varchar2(30),
+img_name varchar2(50),
+base varchar2(50),
+ingredient varchar2(200),   -- '재료1 | 재료2'이런양식
+technique varchar2(100),
+glass varchar2(100),
+isAcid number,  --0=탄산x, 1=탄산o
+temp varchar2(50),    --0=차가운, 1=따듯한, 2=실온
+garnish varchar2(50),
+recipe varchar2(3000),  --1. ~~~~~<br>2. ~~~~ 
+tmi varchar2(2000),
+abv varchar2(50),
+taste varchar2(50),
+color varchar2(50),
+url varchar2(300)
+);
+
+create table member_mycock(     --member(회원)별 저장된 칵테일 저장 테이블
+id varchar2(30) not null,
+cocktail_no number not null,
+add_date date default sysdate,   --추가일(마이페이지 저장된 칵테일 배치 순서 정렬용도)
+constraint mycock_id_fk foreign key(id) REFERENCES member(id),
+constraint mycock_no_fk foreign key(cocktail_no) REFERENCES cocktail(no)
+);
+
+create table cocktail_comm( --상세보기의 댓글 저장할 테이블
+no number primary key,  --댓글에 답글 구분용
+cocktail_no number not null,
+rno number default 0, --답글일시 no값 입력 
+id varchar2(30) not null,
+content varchar2(2000) not null,
+write_date date default sysdate,
+constraint cocktail_comm_id_fk foreign key(id) REFERENCES member(id),
+constraint cocktail_comm_no_fk foreign key(cocktail_no) REFERENCES cocktail(no)
+);
+
+create table content(   --관련 유용한 정보 저장할 테이블
+no number not null, unique(no),
+writer varchar2(30) not null,
+title varchar2(100) not null,
+content varchar2(4000) not null,
+img_name varchar2(50),
+write_date date default sysdate,
+constraint content_writer_fk foreign key(writer) REFERENCES member(id)
+);
+
+create table content_comm( --글의 댓글 저장할 테이블
+no number primary key,  --댓글에 답글 구분용
+content_no number not null,
+rno number default 0, --답글일시 no값 입력 
+id varchar2(30) not null,
+content varchar2(2000) not null,
+write_date date default sysdate,
+constraint content_comm_id_fk foreign key(id) REFERENCES member(id),
+constraint content_comm_no_fk foreign key(content_no) REFERENCES content(no)
+);
+
+create table reply( --댓글의 답글 저장할 테이블
+comm_no number not null,
+id varchar2(30) not null,
+content varchar2(2000) not null,
+write_date date default sysdate,
+
+--------------테스트 데이터 추가
+
+insert into cocktail values(
+cock_seq.nextval, '드라이 마티니', 'Dry Martini', 'D', 'DryMartini.jpg', '진(Gin)', '드라이 진 | 드라이 베르무스', '휘젓기(Sittring)', '칵테일(Cocktail)/90ml', '0', '0', '그린 올리브(Green Olive)',
+'1. 칵테일 글라스에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>2. 믹싱글라스에 큐브 아이스 4~5개를 넣고 Dry Gin(60ml), Dry Vermouth(10ml)를 순서대로 넣은 후 바 스푼을 이용하여 내용물을 3~4회 저어준다.<br>3. 칵테일 글라스에 있는 큐브 아이스를 비운 후 스트레이너를 이용하여 믹싱 글라스에 있는 칵테일의 얼음을 거르며 따라 준다.<br>4. 그린 올리브를 칵테일 픽에 꽂아 칵테일에 장식해준다.', 
+'마티니는 칵테일의 왕자라고 애칭되는 식전주로 그 시작은 진과 버무스를 반반씩 혼합해 만들었으며 마티니는 배합하는 비율과 재료에 따라 백가지 이상의 종류가 있다. 또한 "Martini"라는 이탈리아 버무스를 생산하는 회사에서 자사의 제품을 알리기 위해 만들었다는 설도 있다.',
+'29',                            '29', '09', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/e2eP-44d2sw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);
+insert into cocktail values(
+cock_seq.nextval, '싱가폴 슬링', 'Singapore Sling', 'S', 'SingaporeSling.jpg', '진(Gin)',
+'드라이 진 | 체리 브랜디 | 레몬 주스 | 클럽 소다 | 설탕', '흔들기(Shaking)/직접넣기(Building)', '필스너(Pilsner)/330ml', '1', '0', '슬라이스 오렌지와 체리',
+'1. 필스너 글라스에 큐브 아이스 5~6개를 넣고 잔을 차갑게 한다.<br>2. 쉐이커에 큐브 아이스 4~5개를 넣고 드라이 진(45ml), 레몬 주스(15ml)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회정도 흔들어 준다.<br>3. 얼음이 담겨있는 필스너 글라스에 쉐이커 캡을 열고 스트레이너를 이용하여 칵테일의 얼음을 거르며 따라 준다.<br>4. 필스너 글라스의 나머지 부분은 글라스 8부까지 클럽 소다수를 채운 후 체리브랜디를 그 위에 넣는다.<br>5. 슬라이스 오렌지 위에 체리를 꽂아 칵테일에 장식해 준다.',
+'영궁의 소설가 서머싯이 -동양의 신비-라고 극찬했던 칵테일이다. 싱가폴의 Rafiles Hotel의 Bar에서 1910년에 어느 바텐더가 아름다운 석양을 바라보며 만들어져 1900년대 초반에 여러 종류의 레시피가 알려지기 시작한 Straits Sling에서 유래된 것으로 싱가폴에서 대단한 인기를 차지하게 되어 Singapore Sling이라 이름이 지어졌다고 한다.',
+'29',                           '049', '239', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/8PYtE8wF6pA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --17
+insert into cocktail values(
+cock_seq.nextval, '네그로니', 'Negroni', 'N', 'Negroni.jpg', '진(Gin)',
+'드라이 진 | 스위트 버무스 | 캄파리', '직접넣기(Building)', '올드 패션드(Old Fashioned)/240~300ml', '0', '0', '트위스트 레몬', 
+'1. 올드 패션 글라스에 큐브 아이스 3~4개를 넣는다.<br>2. 얼음이 넣어진 올드 패션 글라스에 드라이 진(22.5ml), 스위트 버무스(22.5ml), 캄파리(22.5ml)를 순서대로 넣은 후 바 스푼을 이용하여 내용물을 3~4회 저어준다.<br>3. 트위스트 레몬으로 칵테일에 장식해 준다.',
+'이태리 카미로 네그로니 백작이 카소니 레스토랑에서 아메리카노에 드라이 진을 첨가하여 마시는 것을 좋아하여 바텐더 포스코 스칼세리씨가 칵테일을 만들어 주면서 백작의 허락을 받아 칵테일의 이름을 `네그로니`로 라고 발표하였다. 캄파리의 씁쓸한 맛이 식전주로 애음되고 있다.',
+'29',                           '29', '129', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/kbGCnu39YGM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --25
+insert into cocktail values(
+cock_seq.nextval, '다이퀴리', 'Daiquiri', 'D', 'Daiquiri.jpg', '럼(Rum)',
+'라이트 럼 | 라임주스 | 설탕', '흔들기(Shaking)', '칵테일(Cocktail)/90ml', '0', '0', 'X',
+'1. 칵테일 글라스에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>2. 쉐이커에 큐브 아이스 4~5개를 넣고 라이트 럼(52.5ml), 라임 주스(22.5ml), 설탕을 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회정도 흔들어 준다.<br>3. 칵테일 글라스에 있는 큐브 아이스를 비운 후 쉐이커에 캡을 열고 스트레이너를 이용하여 칵테일의 얼음을 거르며 따라 준다.',
+'1905년 쿠바의 산타이고 근교에 있는 구리 탄광의 엔지니어 Jennings Cox에 의해 만들어진 술이다. 다이퀴리는 광산의 이름으로 Cox가 손님을 접대하기 위해 쿠바산 럼주에 라임주스와 설탕을 넣고 만들었는데, 손님은 칵테일의 맛을 칭찬하면서 기쁨의 의미로 `다이퀴리`란 이름을 붙였고, 이후 다이퀴리는 남미에서 가장 즐겨 마시는 것으로 유명한데 과일과 얼음을 첨가한 프로즌 다이퀴리를 매우 즐겼다고 한다.',
+'29',                           '19', '39', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/HbqfSlAVEXM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --28
+insert into cocktail values(
+cock_seq.nextval, '바카디', 'Bacardi', 'B', 'Bacardi.jpg', '럼(Rum)',
+'바카디 럼 화이트 | 라임주스 | 그레나딘 시럽', '흔들기(Shaking)', '칵테일(Cocktail)/90ml', '0', '0', 'X', 
+'1. 칵테일 글라스에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>2. 쉐이커에 큐브 아이스 4~5개를 넣고 바카디 럼 화이트(52.5ml), 라임 주스(22.5ml), 그레나딘 시럽(1tsp)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회정도 흔들어 준다.',
+'1933년 바카디 회사가 발표한 칵테일로 뉴욕에서 어느 손님이 바텐더에게 바카디 칵테일을 주문했는데 바텐더가 다른 회사의 럼을 사용하여 조주하였다. 그걸 보고 화가 난 손님이 바카디 칵테일에 바카디 럼을 사용하지 않았다고 고소를 했다. 그 결과 바카디 칵테일은 바카디 럼만으로 만들어야 한다고 판결이 내려졌다. 그래서 1938년에 뉴욕의 법원으로부터 그들 특유의 이름을 부여받았고, 그 때부터 모든 Bar나 음식점에서 바카디 럼 이외의 럼을 사용하여 만들어져 버린 칵테일은 바카디라 지칭할 수 없게 규제하게 되었으며 `바카디 칵테일`은 반드시 바카디 럼을 사용하여 만들게 되었다.',
+'29',                           '19', '29', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/t2uUwjOlgaY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --28
+insert into cocktail values(
+cock_seq.nextval, '쿠바 리브레', 'Cuba Libre', 'C', 'CubaLibre.jpg', '럼(Rum)',
+'라이트 럼 | 라임주스 | 콜라', '직접넣기(Building)', '하이볼(Highball)/180~360ml', '1', '0', '웨지 레몬',
+'1. 하이볼 글라스에 큐브 아이스 3~4개를 넣는다.<br>2. 얼음이 넣어진 하이볼 글라스에 라이트 럼(45ml), 라임 주스(15ml)를 순서대로 넣은 후 글라스 8부까지 콜라를 채운 후 바 스푼을 이용하여 내용물을 3~4회 저어준다.<br>3. 웨지 레몬을 꽂아 칵테일에 장식해 준다.',
+'1902년 스페인의 식민지였던 쿠바의 독립운동 당시에 생겨난 `Viva Cuba Libre(자유 쿠바 만세)`라는 표어에서 유래된 이름이다. 당시 전쟁의 승리와 더불어 쿠바의 유명한 럼이 미군들에게 소개되었고 쿠바에 상륙한 한 장교가 어느 바에 들어갔을 때 미국의 병사가 당시로는 새로나온 음료인 코카콜라를 마시는 것을 즉석에서 쿠바의 럼과 혼합하여 건배하면서 
+칵테일의 이름이 되었다고 한다. 쿠바산 럼에 미국산 콜라를 넣어 양국의 연대감을 나타낸 것이 이 칵테일로 정치적인 의미가 짙다. 럼 특유의 달콤한 향기에 콜라의 단맛과 라임의 신맛이 가미되어 상큼함을 더한다.',
+'19',                           '149', '19', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/siz-VLCsD0I" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --10~13
+insert into cocktail values(
+cock_seq.nextval, '마이-타이', 'Mai-Tai', 'M', 'Mai-Tai.jpg', '럼(Rum)',
+'라이트 럼 | 트리플 섹 | 라임 주스 | 파인애플 주스 | 오렌지 주스 | 그레나딘 시럽', '갈기(Blending)', '필스너(Pilsner)/330ml', '0', '0', '웨지 파인애플 or 오렌지와 체리',
+'1. 필스너 글라스 또는 콜린스 글라스를 준비한다.<br>2. 라이트 럼(37.5ml), 트리플 섹(22.5ml), 라임 주스(30ml), 파인애플 주스(30ml), 오렌지 주스(30ml), 그레나딘 시럽(7.5ml)를 적당량의 크러시드 아이스와 함께 Blender에 넣고 10초 정도 돌린 다음 글라스에 따라낸다.<br>3. 웨지 파인애플 or 오렌지 위에 체리를 꽂아 칵테일에 장식해 준다.',
+'마이타이란 타이티어로 `최고`라는 의미이다. 1944년 미국 오클랜드에 있는 폴리네시안 레스토랑인 `토레다 빅스`의 사장인 `빅터 J.바지로`가 고안한 트로피컬 칵테일이다. 이름 그대로 `최고`의 트로피컬 칵테일이다. 
+장식의 화려함과 칵테일의 색 배합과 그 실루엣은 아름답기로 유명하다. 전 세계에 레시피가 알려져서 만들 수 있도록 한 마이타이믹스나 완제품이 병에 담겨 있는 다양한 제품들이 나와 있다.',
+'29',                           '19', '239', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/QIQvyNmULV0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --16
+insert into cocktail values(
+cock_seq.nextval, '피나 콜라다', 'Pina Colada', 'P', 'PinaColada.jpg', '럼(Rum)',
+'라이트 럼 | 피나 콜라다 믹스 | 파인애플 주스', '갈기(Blending)', '필스너(Pilsner)/330ml or 콜린스(Collins)/420ml', '0', '0', '웨지 파인애플과 체리',
+'1. 필스너 글라스 또는 콜린스 글라스를 준비한다.<br>2. 라이트 럼(37.5), 피나 콜라다 믹스(60ml), 파인애플 주스(60ml)를 적당량의 크러시드 아이스와 함께 Blender에 넣고 10초 정도 돌린 다음 글라스에 따라낸다.<br>3. 웨지 파인애플 or 오렌지 위에 체리를 꽂아 칵테일에 장식해 준다.',
+'스페인어로 `파인애플이 무성한 언덕`이라는 의미를 지니고 있으며 1970년대 카리브해에서 만들어졌다고 한다. 코코넛 향이 진하며 매년 2월 중순 브라질에서 열리는 리오 카니발 때에 많이 사용되고 있다. 라이트 럼 대신 보드카를 넣으면 `치치`칵테일이 된다.',
+'19',                           '19', '09', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/Bw2LOGPFuwU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --9.5
+insert into cocktail values(
+cock_seq.nextval, '블루 하와이안', 'Blue Hawaiian', 'B', 'BlueHawaiian.jpg', '럼(Rum)',
+'라이트 럼 | 말리부 럼 | 블루큐라소 | 파인애플 주스', '갈기(Blending)', '필스너(Pilsner)/330ml or 콜린스(Collins)/420ml', '0', '0', '웨지 파인애플과 체리',
+'1. 필스너 글라스 또는 콜린스 글라스를 준비한다.<br>2. 라이트 럼(30ml), 블루 큐라소(30ml), 말리부 럼(30ml), 파인애플 주스(75.5ml)를 적당량의 크러시드 아이스와 함께 Blender에 넣고 10초 정도 돌린 다음 글라스에 따라낸다.<br>3. 웨지 파인애플 or 오렌지 위에 체리를 꽂아 칵테일에 장식해 준다.',
+'1957년 하와이 힐튼호텔 바텐더가 만든 칵테일로 사계절이 여름인 하와이 섬을 이미지로 한 트로피컬 칵테일에서 유래한 것이다. 코코넛 a사의 달콤한 트로피컬 칵테일로 푸른색이 보기만해도 시원하게 만들어 주는 더운 여름 해변가에서 즐기기 좋은 칵테일이다.',
+'19',                           '19', '49', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/CjkdmFOGPrQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --14.8
+insert into cocktail values(
+cock_seq.nextval, '블러디 메리', 'Bloody Mary', 'B', 'BloodyMary.jpg', '보드카(Vodka)',
+'보드카 | 우스터셔 소스 | 타바스코 소스 | 소금 | 후추 | 토마토 주스', '직접넣기(Building)', '하이볼(Highball)/180~360ml', '0', '0', '슬라이스 레몬 or 샐러리',
+'1. 하이볼 글라스에 우스터셔 소스(1tsp), 타바스코 소스(1dash), 소금(약간), 후추(약간)를 넣고 잘 섞는다.<br>2. 하이볼 글라스에 큐브 아이스를 3~4개를 넣고 보드카(45ml)를 넣고 글라스 8부까지 토마토 주스를 채운 후 바 스푼을 이용하여 내용물을 3~4회 저어준다.<br>3. 슬라이스 레몬이나 샐러리를 꽂아 칵테일에 장식해 준다.',
+'이 술의 유래는 여러 가지가 있다. 그 중 George Jessel이라는 사람에 의한 것이다. 그는 이른 아침에 Palm Spring의 선술집을 찾았으나 일하고 있는 바텐더가 없었다. 그래서 그는 스스로 바에 들어가 토마토 주스와 보드카를 사용하여 숙취에서 깨어날 해장술을 만들었다. 그는 그가 만든 새로운 술을 Mary라는 여성과 함께 즐기다가 그녀에게 엎질렀다. 
+그는 자신의 실수로 어색해진 분위기를 바꿔보고자 `Well, Aren`t Bloody, Mary?`라고 말한 것에서 유래됐다고 한다. 외국에서 해장술로 유명한 칵테일로 토마토의 신맛을 내는 구연산이 숙취로 인한 속쓰림을 해소하고 과당, 포도당뿐만 아니라 미량 원소인 비타민 C와 비타민B, 글루타민산이 풍부해 간을 보호하기 때문이다.',
+'19',                           '39', '29', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/gVUPtnjXDxM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --10~13
+insert into cocktail values(
+cock_seq.nextval, '블랙 러시안', 'Black Russian', 'B', 'BlackRussian.jpg', '보드카(Vodka)',
+'보드카 | 커피 리큐어', '직접넣기(Building)', '올드 패션드(Old Fashioned)/240~300ml', '0', '0', 'X',
+'1. 올드 패션 글라스에 큐브 아이스 3~4개를 넣는다.<br>2. 얼음이 넣어진 올드 패션 글라스에 보드카(30ml), 커피 리큐어(15ml)를 순서대로 넣은 후 바 스푼을 이용하여 내용물을 3~4회 저어준다.',
+'블랙 러시아는 `어두운 러시아(인)`라는 뜻으로 러시아의 공산주의의 종주국이던 시절, 암흑의 세계, 장막의 나라로 불리던 시절의 러시아를 상징한다. K.G.B.의 횡포에 항거하는 의미가 담겨져 있다고도 하는 이 칵테일은 러시아 사람들의 음흉함, 어두움을 뜻하는 말로 `블랙 러시안`이라는 표현이 쓰이곤 하는데 지금의 러시아 사람들은 이 `블랙 러시안`이라는 말을 싫어한다고 한다. 크림이나 우유를 첨가하면 `화이트 러시안`이라는 칵테일이 된다.',
+'39',                           '29', '19', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/4axfOD-ZpiM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+); 
+insert into cocktail values(
+cock_seq.nextval, '하비 월뱅어', 'Harvey Wallbanger', 'H', 'HarveyWallbanger.jpg', '보드카(Vodka)',
+'보드카 | 갈리아노 | 오렌지 주스', '직접넣기(Building)/띄우기(Floating / Layering)', '콜린스(Collins)/420ml', '0', '0', 'X',
+'1. 콜린스 글라스에 큐브 아이스 5~6개를 넣는다.<br>2. 얼음이 담겨있는 콜린스 글라스에 보드카(45ml)를 넣고 글라스 8부까지 오렌지 주스로 채운 후 바 스푼을 이용하여 내용물을 3~4회 저어준다.<br>3. 만들어진 칵테일 위에 갈리아노(15ml)를 띄운다.',
+'비틀거리는 보드라는 `하비 월뱅어` 이름은 캘리포니아의 한 서퍼의 이름에서 따온 것 이라고 전해지고 있다. 하비(Harvey)라는 서퍼챔피언이 갈리아노 리큐어를 넣은 독특한 스크류드라이버를 즐겨 마셨는데 어느 날, 칵테일을 너무 많이 마신 하비가 취해서 벽에 부딪히며 돌아오는 그를 보고 사람들이 `벽에 부딪히는 하비`라고 불렀는데, 그 것이 칵테일명의 유래이다.',
+'29',                           '09', '39', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/P0GhQ_n6Ftk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --16
+insert into cocktail values(
+cock_seq.nextval, '키스 오브 파이어', 'Kiss of Fire', 'K', 'KissofFire.jpg', '보드카(Vodka)',
+'보드카 | 슬로우 진 | 드라이 버무스 | 레몬 주스', '흔들기(Shaking)', '칵테일(Cocktail)/90ml', '0', '0', '설탕(리밍)',
+'1. 칵테일 글라스 테두리에 레몬즙을 바르고 설탕을 묻힌다.<br>2. 쉐이커에 큐브 아이스 4~5개를 넣고 보드카(30ml), 슬로우 진(15ml), 드라이 버무스(15ml), 레몬 주스(1tsp)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회정도 흔들어 준다.<br>3. 칵테일 글라스에 쉐이커 캡을 열고 스트레이너를 이용하여 칵테일의 얼음을 거르며 따라준다.',
+'1953년 제 5회 일본 바텐더 경연대회에서 1위로 입상한 칵테일로 `이시오가 켄지`가 만든 칵테일이다. 젊은 연인간의 달콤한 사랑을 연상케 하는 칵테일로 `불타는 키스`정도로 직역해볼 수 있다. 화려한 붉은 색에 스노우 스타일로 연출한 아름다운 칵테일이다.',
+'29',                           '29', '29', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/e8gOZRUjYdc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --25
+insert into cocktail values(
+cock_seq.nextval, '시 브리즈', 'Sea Breeze', 'S', 'SeaBreeze.jpg', '보드카(Vodka)',
+'보드카 | 크렌베리 주스 | 자몽 주스', '직접넣기(Building)', '하이볼(Highball)/180~360ml', '0', '0', '웨지 레몬 or 라임',
+'1. 하이볼 글라스에 큐브 아이스 3~4개를 넣는다.<br>2. 얼음이 넣어진 하이볼 글라스에 보드카(45ml), 크랜베리 주스(90ml), 자몽 주스(15ml)를 순서대로 넣은 후 바 스푼을 이용하여 내용물을 3~4회 저어준다.<br>3. 웨지 레몬 or 라임을 꽂아 칵테일에 장식해 준다.',
+'바닷바람 산들산들 불어오는 해풍이라는 뜻으로 1920년대 후반에 보드카에 여름과일을 넣어 만든 것이 처음이었다. 이 칵테일은 프랑스영화 `프렌치키스`에서 주인공이 프랑스 칸느해변을 거닐며 마신 칵테일로도 유명하다.',
+'19',                           '09', '29', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/50VHrhbsgAU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --8~10
+insert into cocktail values(
+cock_seq.nextval, '애플 마티니', 'Apple Martini', 'A', 'AppleMartini.jpg', '보드카(Vodka)',
+'보드카 | 애플 퍼커 | 라임 주스', '흔들기(Shaking)', '칵테일(Cocktail)/90ml', '0', '0', '슬라이스 사과',
+'1. 칵테일 글라스에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>2. 쉐이커에 큐브 아이스 4~5개를 넣고 보드카(30ml), 애플 퍼커(30ml), 라임 주스(15ml)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회정도 흔들어 준다.<br>3. 칵테일 글라스에 있는 큐브 아이스를 비운 후 쉐이커에 캡을 열고 스트레이너를 이용하여 칵테일의 얼음을 거르며 따라 준다.<br>4. 슬라이스 사과를 칵테일에 장식해 준다.',
+'수십 종류를 가진 마티니는 `칵테일의 왕`이라 불리는데 독한 마티니라는 편견을 깨고 가볍고 달콤하게 즐길 수 있게 만든 칵테일이다. `섹스 앤 더 시티`라는 미국의 드라마에서 자주 등장해서 여성들에게 인기가 많은 칵테일이다.',
+'29',                           '19', '59', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/oItlQLqwDas" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);
+insert into cocktail values(
+cock_seq.nextval, '롱 아일랜드 아이스 티', 'Long Island Iced Tea', 'L', 'LongIslandIcedTea.jpg', '보드카(Vodka)',
+'보드카 | 진 | 라이트 럼 | 데킬라 | 트리플 섹 | 스윗-사워 믹스 | 콜라', '직접넣기(Building)', '콜린스(Collins)/420ml', '1', '0', '웨지 레몬 or 라임',
+'1. 콜린스 글라스에 큐브 아이스 5~6개를 넣는다.<br>2. 얼음이 담겨있는 콜린스 글라스에 보드카(15ml), 진(15ml), 라이트 럼(15ml), 데킬라(15ml), 트리플 섹(15ml), 스윗-사워 믹스(45ml)를 순서대로 넣고 글라스 8부 까지 콜라로 채운 후 바 스푼을 이용하여 내용물을 3~4회 저어준다.<br>3. 웨지 레몬 or 라임을 꽂아 칵테일에 장식해 준다.',
+'롱아일랜드는 미국 뉴욕의 동남부에 있는 섬으로서 독립전쟁 당시 격전지로 유명한 곳이다. 이것을 응용한 칵테일로서 일명 `칵테일 폭탄주`로 불리며, 다섯 종류의 증류주가 들어가지만 콜라와 혼합되면서 홍차의 색과 맛이 난다고 하여 붙여진 이름이다.',
+'29',                           '049', '139', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/1xloS9kycPA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);
+insert into cocktail values(
+cock_seq.nextval, '코스모폴리탄', 'Cosmopolitan', 'C', 'Cosmopolitan.jpg', '보드카(Vodka)',
+'보드카 | 트리플 섹 | 라임 주스 | 크렌베리 주스', '흔들기(Shaking)', '칵테일(Cocktail)/90ml', '0', '0', '트위스트 레몬 or 라임',
+'1. 칵테일 글라스에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>2. 쉐이커에 큐브 아이스 4~5개를 넣고 보드카(30ml), 트리플 섹(15ml), 라임 주스(15ml), 크랜베리 주스(15ml)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회 정도 흔들어 준다.<br>3. 칵테일 글라스에 있는 큐브 아이스를 비운 후 쉐이커에 캡을 열고 스트레이너를 이용하여 칵테일의 얼음을 거르며 따라 준다.<br>4. 트위스트 레몬 or 라임으로 칵테일에 장식해 준다.',
+'`세계인`, `국제적인`, `범세계주의자` 등의 세계적인 의미를 지닌 칵테일로 매우 도시적이며 뉴욕 여성들에게 인기 있는 칵테일이다. 미국의 인기 드라마 `섹스 앤 더 시티`의 여자 주인공 `캐리`가 즐겨 마시던 칵테일 중의 하나로 유명해진 칵테일이다.',
+'29',                           '29', '29', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/vKv8cnh2ocU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --약20
+insert into cocktail values(
+cock_seq.nextval, '모스코 뮬', 'Moscow Mule', 'M', 'MoscowMule.jpg', '보드카(Vodka)',
+'보드카 | 라임주스 | 진저 에일', '직접넣기(Building)', '하이볼(Highball)/180~360ml', '1', '0', '슬라이스 레몬 or 라임',
+'1. 하이볼 글라스에 큐브 아이스 3~4개를 넣는다.<br>2. 얼음이 넣어진 하이볼 글라스에 보드카(45ml), 라임 주스(15ml)를 순서대로 넣은 후 글라스 8부까지 진저 에일로 채운 후 바 스푼을 이용하여 내용물을 3~4회 저어준다.<br>3. 슬라이스 레몬 or 라임을 꽂아 칵테일에 장식해 준다.',
+'스미노프 보드카의 소유자 `잭 마틴`과 그의 친구인 콕 앤 불의 사장 `잭 모건`에 의해 채텀 바에서 만들어진 칵테일이다. 이 칵테일의 `뮬`은 암컷 말과 수컷 당나귀에서 태어난 노새를 뜻하는 말로 `모스크바의 노새`라는 뜻으로 처음 마실 때에는 라임과 진저 에일의 상큼함, 청량감을 맛보게 되지만 그 뒤에 숨겨진 보드카의 풍미 때문에 마신 뒤에는 살짝 취기가 돌아 노새가 뒷발로 찬다는 습성을 표현한 이름 그대로를 느낄 수 있다.',
+'19',                           '49', '039', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/6X0oO5OZzLQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);
+insert into cocktail values(
+cock_seq.nextval, '마가리타', 'Margarita', 'M', 'Margarita.jpg', '데킬라(Tequila)', '데킬라 | 트리플 섹 | 라임 주스', '흔들기(Shaking)', '칵테일(Cocktail)/90ml', '0', '0', '소금(리밍)',
+'1. 칵테일 글라스 테두리에 레몬즙을 바르고 소금을 묻힌다.<br>2. 쉐이커에 큐브 아이스 4~5개를 넣고 데킬라(45ml), 트리플 섹(15ml), 라임 주스(15ml)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회 정도 흔들어 준다.<br>3. 칵테일 글라스에 쉐이커 캡을 열고 스트레이너를 이용하여 칵테일의 얼음을 거르며 따라준다.',
+'슬픈 사연을 담고 있는 칵테일로 `마가리타`는 스페인어이며 영어로 바꾸면 `마가렛`이라는 여자 이름이다. 1949년 로스엔젤리스의 한 레스토랑에 근무하는 바텐더가 그 해 미국 칵테일 대회에서 입선했는데, 1926년 멕시코의 두남녀가 사냥을 하러갔다가 총기 오발 사고로 죽은 거의 애인에게 바치는 칵테일이다. 
+그녀는 모든 술을 마실 때 소금을 곁들여 마시는 습관이 있어서 그는 그녀를 위해 소금을 글라스 가장자리에 바르는 새로운 칵테일을 만들고 그녀의 이름을 붙였다고 한다. 트리플 섹을 블루 퀴라소로 바꾸면 `블루 마가리타`라는 칵테일이 된다.',
+'39',                           '29', '09', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/vLMiQozMcUo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --30
+insert into cocktail values(
+cock_seq.nextval, '데킬라 선라이즈', 'Tequila Sunrise', 'T', 'TequilaSunrise.jpg', '데킬라(Tequila)', '데킬라 | 오렌지 주스 | 그레나딘 시럽', '직접넣기(Building)', '필스너(Pilsner)/330ml', '0', '0', 'X',
+'1. 하이볼 글라스에 큐브 아이스 4~5개를 넣는다.<br>2. 얼음이 담겨있는 하이볼 글라스에 데킬라(45ml)를 넣고 글라스 8부까지 오렌지 주스로 채운다.<br>3. 만들어진 칵테일 위에 그레나딘 시럽(15ml)을 띄운다',
+'데킬라의 고향인 멕시코에 선인장만이 있을 것 같은 황폐한 평온을 붉게 비추며 타오르는 일출을 이미지로 표현한 칵테일이다. 오렌지 주스와 그레나딘 시럽이 인상적인 일출을 잘 표현하고 있다.',
+'19',                           '09', '239', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/ab1LClj-gyw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --11
+insert into cocktail values(
+cock_seq.nextval, '브랜디 알렉산더', 'Brandy Alexander', 'B', 'BrandyAlexander.jpg', '브랜디(Brandy)', '브랜디 | 크렘 드 카카오(브라운) | 우유', '흔들기(Shaking)', '칵테일(Cocktail)/90ml', '0', '0', '넛맥 파우더',
+'1. 칵테일 글라스에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>2. 쉐이커에 큐브 아이스 4~5개를 넣고 브랜디(22.5ml), 크렘 드 카카오(22.5ml), 우유(22.5ml)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회정도 흔들어 준다.<br>3. 칵테일 글라스에 있는 큐브 아이스를 비운 후 쉐이커에 캡을 열고 스트레이너를 이용하여 칵테일의 얼음을 거르며 따라 준다.<br>4. 만들어진 칵테일 위에 넛맥 가루를 뿌려준다.',
+'1863년 영국의 국왕 에드워드 7세와 덴마크 왕국의 장녀 알렉산드라와의 결혼을 기념하여 만들어진 칵테일이다. 처음에는 `알렉산드라`라는 여성의 이름을 붙였으나 시간이 지나면서 지금의 이름으로 바뀌었ㄷ고 한다. 잭 레먼이 주연한 영화 `술과 장미의 나날`에서 술을 전혀 마실 줄 모르는 아내에게 남편이 이 칵
+테일을 권하면서 두 사람이 알코올 중독자가 되어가는 이야기의 영화이다. 영화에서처럼 누구든 쉽게 알코올 중독자로 만들 수 있는 칵테일로 `중독이 되는 술`이라고도 한다.',
+'29',                           '19', '09', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/K9QjlWQazr0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --20
+insert into cocktail values(
+cock_seq.nextval, '사이드카', 'Sidecar', 'S', 'Sidecar.jpg', '브랜디(Brandy)', '브랜디 | 코엥뜨로 or 트리플 섹 | 레몬 주스', '흔들기(Shaking)', '칵테일(Cocktail)/90ml', '0', '0', 'X',
+'1. 칵테일 글라스에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>2. 쉐이커에 큐브 아이스 4~5개를 넣고 브랜디(30ml), 꼬엥뜨로 or 트리플섹(30ml), 레몬 주스(7.5ml)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회 정도 흔들어 준다.<br>3. 칵테일 글라스에 있는 큐브 아이스를 비운 후 쉐이커에 캡을 열고 스트레이너를 이용하여 칵테일의 얼음을 거르며 따라 준다.',
+'제 1차 세계대전 당시 프랑스 파리의 목로 주점 거리를 사이드 카를 타고 달리던 군인이 처음 만들어낸 술이라 하여 지어진 이름이다. 독일군 정찰대 장교가 적지인 프랑스 점령지에 진격하여 자신을 태우고 간 사이드카 기사에게 승전의 기쁨을 즐기
+기 위하여 술을 구하여 오라고 하였더니 민가에서 프랑스산 꼬냑과 꼬엥뜨로를 가지고와 여기에 레몬 주스를 넣어 만들어진 것이 시작이라고 한다.',
+'39',                           '29', '39', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/2nmPZ0KgbXU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --35.5
+insert into cocktail values(
+cock_seq.nextval, '허니문', 'Honeymoon', 'H', 'Honeymoon.jpg', '브랜디(Brandy)', '애플 브랜디 | 베네딕틴 DOM | 트리플 섹 | 레몬 주스', '흔들기(Shaking)', '칵테일(Cocktail)/90ml', '0', '0', 'X',
+'1. 칵테일 글라스에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>2. 쉐이커에 큐브 아이스 4~5개를 넣고 애플 브랜디(22.5ml), 베네딕틴 DOM(22.5ml), 트리플 섹(7.5ml), 레몬 주스(15ml)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회정도 흔들어 준다.<br>3. 칵테일 글라스에 있는 큐브 아이스를 비운 후 쉐이커에 캡을 열고 스트레이너를 이용하여 칵테일의 얼음을 거르며 따라 준다.',
+'신혼의 단꿈을 영원히 간직하기 위해 만든 칵테일로 프랑스풍의 칵테일 중에서는 대표적이다. 단맛과 신맛이 조화를 이룬 칵테일이다.',
+'29',                           '29', '39', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/NDz2CCtS_iw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --27
+insert into cocktail values(
+cock_seq.nextval, '맨하탄', 'Manhattan', 'M', 'Manhattan.jpg', '위스키(Whisky)', '버번 위스키 | 스위트 버무스 | 앙고스투라 비터스', '휘젓기(Sittring)', '칵테일(Cocktail)/90ml', '0', '0', '체리', 
+'1. 칵테일 글라스에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>2. 믹싱글라스에 큐브 아이스 4~5개를 넣고 버번 위스키(45ml), 스위트 버무스(22.5ml), 앙고스투라 비터스(1dash)를 순서대로 넣은 후 바 스푼을 이용하여 내용물을 3~4회 저어준다.<br>3. 칵테일 글라스에 있는 큐브 아이스를 비운 후 스트레이너를 이용하여 믹싱 글라스에 있는 칵테일을 얼음을 거르며 따라 준다.<br>4. 체리를 칵테일 픽에 꽂아 칵테일에 장식해준다.',
+'칵테일의 여왕으로 불리는 맨하탄은 영국의 수상이었던 처칠의 어머니 `제니 젤롬` 여사가 만들어낸 것으로 알려져 있는데, 미국인이었던 그녀가 1876년 자신이 지지하는 대통령 후보를 위해 맨하탄 클럽에서 파티를 열어 이 칵테일
+을 초대객들에게 대접한데서 시작되었다 한다. 한편 맨하탄 시가 메트로폴리탄으로 승격된 것을 축하하는 뜻으로 1890년 맨하탄의 한 바에서 만들어졌다는 얘기도 있다. 참고로 맨하탄은 인디안 알콘 퀀족 말로 `고주망태` 또는 `주정뱅이`라는 뜻을 가지고 있다고 한다.',
+'39',                           '29', '129', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/MFs4hA2DriU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --32
+insert into cocktail values(
+cock_seq.nextval, '올드 패션드', 'Old Fashioned', 'O', 'OldFashioned.jpg', '위스키(Whisky)', '버번 위스키 | 앙고스투라 비터스 | 소다수 | 각설탕', '직접넣기(Building)', '올드 패션드(Old Fashioned)/240~300ml', '1', '0', '슬라이스 오렌지와 체리',
+'1. 올드 패션 글라스에 각설탕과 앙고스투라 비터스(1dash), 소다수(15ml)를 차례로 넣고 잘 용해시킨다.<br>2. 올드 패션 글라스에 큐브 아이스 4~5개를 넣고 버번 위스키(45ml)를 넣은 후 바 스푼을 이용하여 내용물을 3~4회 저어준다.<br>3. 슬라이스 오렌지에 체리를 꽂아 칵테일에 장식해준다.',
+'미국 켄터키주 루이스빌레에 있는 펜데니스 클럽의 바텐더가 펜데니스 클럽에 모인 경마 팬을 위해 만든 칵테일이라고 한다. 그 당시 유행하던 토디와 그 맛과 형태가 비슷해 지난 날의 기억을 되살려 준다는 의미로 붙은 이름이다. 위
+스키를 베이스로 하여 남성적인 이미지가 강한 칵테일로 처음 마셨을 때 아메리카 위스키의 바닐라 향과 비터의 쓴맛을 느낄 수 있다. 시간이 지날수록 설탕이 용해되면서 다양한 맛을 즐길 수 있는 매력적인 칵테일이다.',
+'39',                           '249', '129', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/mf1ax7y0yyI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);
+insert into cocktail values(
+cock_seq.nextval, '러스티 네일', 'Rusty Nail', 'R', 'RustyNail.jpg', '위스키(Whisky)', '스카치 위스키 | 드람뷔이', '직접넣기(Building)', '올드 패션드(Old Fashioned)/240~300ml', '0', '0', 'X',
+'1. 올드 패션 글라스에 큐브 아이스 3~4개를 넣는다.<br>2. 얼음이 넣어진 올드 패션 글라스에 스카치 위스키(30ml), 드람뷔이(15ml)를 순서대로 넣은 후 바 스푼을 이용하여 내용물을 3~4회 저어준다.',
+'`녹슨 못` 또는 영국의 속어로 `고풍스러운`이라는 뜻을 가지고 있는 칵테일이다. 그만큼 오래된 칵테일이라는 뜻으로 영국 신사들이 즐겨 마시는 칵테일이다. 위스키의 강한 맛과 벌꿀의 단맛, 허브의 스파이시한 맛이 어울려져 식후주로도 좋은 칵테일이다.',
+'39',                           '29', '239', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/3po6GT4Te64" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --40
+insert into cocktail values(
+cock_seq.nextval, '뉴욕', 'New York', 'N', 'NewYork.jpg', '위스키(Whisky)', '버번 위스키 | 라임 주스 | 그레나딘 시럽 | 설탕', '흔들기(Shaking)', '칵테일(Cocktail)/90ml', '0', '0', '트위스트 레몬',
+'1. 칵테일 글라스에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>2. 쉐이커에 큐브 아이스 4~5개를 넣고 버번 위스키(45ml), 라임 주스(15ml), 설탕(1tsp), 그레나딘 시럽(1/2tsp)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회 정도 흔들어 준다.<br>3. 칵테일 글라스에 있는 큐브 아이스를 비운 후 쉐이커에 캡을 열고 스트레이너를 이용하여 칵테일의 얼음을 거르며 따라 준다.<br>4. 트위스트 레몬으로 칵테일에 장식해 준다.',
+'미국의 대도시 뉴욕의 이름을 그대로 붙인 칵테일로서 뉴욕의 해가 떠오르는 모습을 연상케 하는 화려한 색채와 자극적이지 않은 맛으로 전 세계인들에게 사랑을 받고 있는 칵테일이다.',
+'29',                           '29', '29', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/N6b1cxMwxzU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --26~28
+insert into cocktail values(
+cock_seq.nextval, '위스키 사워', 'Whiskey Sour', 'W', 'WhiskeySour.jpg', '위스키(Whisky)', '버번 위스키 | 레몬 주스 | 소다수 | 설탕', '흔들기(Shaking)/직접넣기(Building)', '사워(Sour)/150ml', '1', '0', '슬라이스 레몬과 체리', 
+'1. 사워 글라스에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>2. 쉐이커에 큐브 아이스 4~5개를 넣고 버번 위스키(45ml), 레몬 주스(15ml), 설탕(1tsp)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회 정도 흔들어 준다.<br>사워 글라스에 있는 큐브 아이스를 비운 후 쉐이커에 캡을 열고 스트레이너를 이용하여 칵테일의 얼음을 거르며 따라 준다.<br>4. 칵테일을 따른 사워 글라스에 소다수를 넣어준다.<br>5. 슬라이스 레몬에 체리를 꽂아 칵테일에 장식해 준다.',
+'1860년 프랑스에서 브랜디에 레몬주스와 설탕을 넣어 만들어 마신 것이 시초이며 1891년 미국에서 버번위스키를 베이스로 만들어 마시면서 널리 알려지기 시작하였다. 레몬주스의 새콤한 맛이 미각을 돋구어 주는 칵테일로 베이스를 진을 사용하면 `진 사워`, 브랜디를 사용하면 `브랜디 사워`가 된다.',
+'29',                           '149', '39', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/SxjRugyeS9s" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);
+insert into cocktail values(
+cock_seq.nextval, '푸스 카페', 'Pousse Cafe', 'P', 'PousseCafe.jpg', '리큐어(Liqueur)', '브랜디 | 크렘 드 민트(그린) | 그레나딘 시럽', '띄우기(Floating / Layering)', '리큐어(Liqueur)/X', '0', '2', 'X',
+'1. 리큐어 글라스를 준비한다.<br>2. 그레나딘 시럽은 지거를 이용하여 리큐어 글라스에 직접 넣어준다. 이때 글라스 안쪽 벽에 묻지 않게 조심해서 따른다.<br>3.바 스푼 뒷부분을 이용해 그레나딘 시럽(1/3part), 크렘 드 민트(1/3part), 브랜디(1/3part)를 순서대로 쌓아준다.',
+'정찬 때 커피와 함께 또는 그 뒤에 나오는 작은 잔에 비중이 서로 다른 리큐어를 쌓아올린 술로써 `Coffe Pusher`라는 뜻이다.',
+'19',                           '39', '69', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/LjVLRy0xsec" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);
+insert into cocktail values(
+cock_seq.nextval, 'B-52', 'B-52', 'B', 'B-52.jpg', '리큐어(Liqueur)', '커피 리큐어 | 베일리스 | 그랑 마니에르', '띄우기(Floating / Layering)', '셰리(Sherry)/60ml', '0', '2', 'X',
+'1. 셰리 글라스를 준비한다.<br>2. 커피 리큐어(1/3part)는 지거를 이용하여 셰리 글라스에 직접 넣어준다. 이때 글라스 안쪽 벽에 묻지 않게 조심해서 따른다.<br>3. 바 스푼 뒷부분을 이용해 베일리스(1/3part), 그랑 마니에르(1/3part)를 순서대로 쌓아준다.',
+'미국의 전쟁 당시 사용되었던 미국의 폭격기 이름을 따서 만든 칵테일로 주로 소이탄 폭격을 하는 데 쓰였다고 한다. 소이탄은 발화를 목적으로 쓰이는 탄으로, 이것을 착안해서 칵테일에도 불을 붙이는 방식을 사용했던 것 같다고 한다. 슈터칵테일(한번에 들이킬 수 있는 칵테일)로 대표적이다. 폭격기와의 강한 이미지와는 다르게 커피, 코코넛 크림과 꼬냑에 오렌지 향이 어울려져 달콤한 맛이 매력적인 칵테일이다.',
+'29',                           '09', '69', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/jGf0lfcZSvY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --26
+insert into cocktail values(
+cock_seq.nextval, '준 벅', 'June Bug', 'J', 'JuneBug.jpg', '리큐어(Liqueur)', '멜론 리큐어 | 말리부 럼 | 바나나 리큐어 | 파인애플 주스 | 스윗-사워 믹스', '흔들기(Shaking)', '콜린스(Collins)/420ml', '0', '0', '웨지 파인애플과 체리',
+'1. 콜린스 글라스에 큐브 아이스 5~6개를 넣고 잔을 차갑게 한다.<br>2. 쉐이커에 큐브 아이스 4~5개를 넣고 멜론 리큐어(30ml), 말리부 럼(15ml), 바나나 리큐어(15ml), 파인애플 주스(60ml), 스윗-사워 믹스(60ml)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회 정도 흔들어 준다.<br>3. 얼
+음이 담겨있는 콜린스 글라스에 쉐이커의 캡을 열고 스트레이너를 이용하여 칵테일의 얼음을 거르며 따라 준다.<br>4. 웨지 파인애플 위에 체리를 꽂아 칵테일에 장식해 준다.',
+'색상 때문에 `6월의 애벌레`라는 뜻을 가지고 있는 칵테일이다. 초원이 푸르러 활동이 왕성해진 애벌레라는 뜻으로 상큼한 맛과 푸르른 색깔의 조화로 가장 인기 있는 칵테일이다. 멜론과 코코넛, 바나나의 맛과 향을 풍부하게 느낄 수 있는 트로피컬 칵테일이다.',
+'19',                           '09', '59', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/CSXdNJ86T3Q" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);
+insert into cocktail values(
+cock_seq.nextval, '슬로 진 피즈', 'Sloe Gin Fizz', 'S', 'SloeGinFizz.jpg', '리큐어(Liqueur)', '슬로우 진 | 레몬 주스 | 소다수 | 설탕', '흔들기(Shaking)/직접넣기(Building)', '하이볼(Highball)/180~360ml', '1', '0', '슬라이스 레몬',
+'1. 하이볼 글라스에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>2. 쉐이커에 큐브 아이스 4~5개를 넣고 슬로우 진(45ml), 레몬 주스(15ml), 설탕(1tsp)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회 정도 흔들어 준다.<br>3. 얼음이 담겨있는 하이볼 글라스에 있는 쉐이커에 캡을 열고 스트레이너를 이용하여 칵테일의 얼음을 거르며 따라 준다.<br>4. 칵테일을 따른 하이볼 글라스에 소다수를 8부까지 채우고 난 후 바 스푼을 이용하여 내용물을 3~4회 저어준다.<br>5. 슬라이스 레몬을 칵테일에 장식해 준다.',
+'1963년 4월 8일 워커힐이 동양최대의 종합휴양소로 주한 미군을 위해 개관하였을 때 만들어진 칵테일이다. 내국인의 출입이 통제되고 미군들만이 워커힐을 이용할 당시 미군과 동반하여 오는 여성들을 위해 순하고 맛이 좋은 칵테일로 만든 것이 시초이다. 슬로우진에 레몬주스를 넣고 설탕과 탄산수를 섞어서 만드는데 마지막에 피즈(Fizz)는 탄산음료의 뚜껑을 열 때 `피즈~`하고 소리가 나서 붙여진 이름이라고 한다.',
+'19',                           '49', '29', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/GCNhhHVA3j8" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);
+insert into cocktail values(
+cock_seq.nextval, '그래스호퍼', 'Grasshopper', 'G', 'Grasshopper.jpg', '리큐어(Liqueur)', '크렘 드 민트(그린) | 크렘 드 카카오(화이트) | 우유', '흔들기(Shaking)', '샴페인(Champagne)/180ml', '0', '0', 'X', 
+'1. 샴페인 글라스에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>2. 쉐이커에 큐브 아이스 4~5개를 넣고 크렘 드 민트(30ml), 크렘 드 카카오(30ml), 우유(30ml)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회 정도 흔들어 준다.',
+'그래스호퍼는 `메뚜기`, `여치`란 말로, 빛깔이 엷은 녹색인 데서 그 이름이 만들어진 것이다. 크렘 드 민트(민트)의 시원한 향기와 크렘 드 카카오(화이트)의 달콤한 맛에 우유를 더하여 디저트용 칵테일이다.',
+'19',                           '39', '59', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/prS6sXMsULk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);
+insert into cocktail values(
+cock_seq.nextval, '애프리콧', 'Apricot', 'A', 'Apricot.jpg', '리큐어(Liqueur)', '애프리콧 플레이버드 브랜디 | 드라이 진 | 레몬 주스 | 오렌지 주스', '흔들기(Shaking)', '칵테일(Cocktail)/90ml', '0', '0', 'X',
+'1. 칵테일 글라스에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>2. 쉐이커에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>2. 쉐이커에 큐브 아이스 4~5개를 넣고 애프리콧 플레이버드 브랜디(45ml), 드라이 진(1tsp), 레몬 주스(15ml), 오렌지 주스(15ml)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회 정도 흔들어 준다.<br>3. 칵테일 글라스에 있는 큐브 아이스를 비운 후 쉐이커에 캡을 열고 스트레이너를 이용하여 칵테일의 얼음을 거르며 따라 준다.',
+'향기가 강한 리큐어인 `애프리콧 브랜디`를 베이스로 새콤하고 달콤한 레몬과 오렌지 주스를 사용한 칵테일이다. 살구 풍미가 그대로 살아있는 심플한 칵테일로 달콤하고 상큼한 맛이 살아있는 숏드링크 칵테일이다.',
+'29',                           '39', '239', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/qHHHc5ugqLU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);
+insert into cocktail values(
+cock_seq.nextval, '키르', 'Kir', 'K', 'Kir.jpg', '와인(Wine)', '화이트 와인 | 크렘 드 카시스', '직접넣기(Building)', '와인(Wine)/x', '0', '2', '트위스트 레몬',
+'1. 와인 글라스에 화이트 와인(90ml), 크렘 드 카시스(15ml)를 순서대로 넣은 후 바 스푼을 이용하여 내용물을 3~4회 저어준다.<br>2. 트위스트 레몬으로 칵테일에 장식해 준다.',
+'키르 칵테일(Kir cocktail)은 제 2차 세계대전 후 프랑스의 부르고뉴 지방의 시장을 역임한 `캬농펠리스 키르`라는 사람의 이름에서 유래되었다. 와인의 고향인 프랑스에서 태어난 식전주이며 부르고뉴산의 화이트와인과 디종시 특산의 `크렘 드 카시스`를 사용하는 디종시의 공식 리셉션주이며 특히 스키 마니아들이 많이 애용하는 와인 칵테일이다. 화이트 와인 대신 샴페인이나 스파클링 와인을 첨가한다면 `키르 로얄(Kir Riyal)`칵테일이 된다.',
+'19',                           '39', '29', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/n-pfgbGPMa4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --13~14
+insert into cocktail values(
+cock_seq.nextval, '힐링', 'Healing', 'H', 'Healing.jpg', '전통주', '감홍로 | 베네딕틴 DOM | 크렘 드 카시스 | 스윗-사워 믹스', '흔들기(Shaking)', '칵테일(Cocktail)/90ml', '0', '0', '트위스트 레몬',
+'1. 칵테일 글라스에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>
+2. 쉐이커에 큐브 아이스 4~5개를 넣고 감홍로(45ml), 베네딕틴 DOM(10ml), 크렘 드 카시스(10ml), 스윗-사워 믹스(10ml)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회 정도 흔들어 준다.<br>
+3. 칵테일 글라스에 있는 큐브 아이스를 비운 후 쉐이커에 캡을 열고 스트레이너를 이용하여 칵테일의 얼음을 거르며 따라 준다.<br>
+4. 트위스트 레몬으로 칵테일에 장식해 준다.',
+'',
+'39',                           '39', '239', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/6yNFcl9Onqo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --31.3333
+insert into cocktail values(
+cock_seq.nextval, '진도', 'Jindo', 'J', 'Jindo.jpg', '전통주', '진도 홍주 | 크렘 드 민트 화이트 | 청포도 주스 | 라즈베리 시럽', '흔들기(Shaking)', '칵테일(Cocktail)/90ml', '0', '0', 'X',
+'1. 칵테일 글라스에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>
+2. 쉐이커에 큐브 아이스 4~5개를 넣고 진도 홍주(30ml), 크렘 드 민트 화이트(15ml), 청포도 주스(22.5ml), 라즈베리 시럽(15ml)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회 정도 흔들어 준다.<br>
+3. 칵테일 글라스에 있는 큐브 아이스를 비운 후 쉐이커에 캡을 열고 스트레이너를 이용하여 칵테일의 얼음을 거르며 따라 준다.',
+'',
+'29',                           '39', '29', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/h0J4LvSc5Dw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --18.9
+insert into cocktail values(
+cock_seq.nextval, '풋사랑', 'Puppy Love', 'P', 'PuppyLove.jpg', '전통주', '안동소주 | 트리플 섹 | 애플 퍼커 | 라임 주스', '흔들기(Shaking)', '칵테일(Cocktail)/90ml', '0', '0', '슬라이스 사과',
+'1. 칵테일 글라스에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>
+2. 쉐이커에 큐브 아이스 4~5개를 넣고 안동소주(30ml), 트리플 섹(10ml), 애플 퍼커(30ml), 라임 주스(10ml)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회 정도 흔들어 준다.<br>
+3. 칵테일 글라스에 있는 큐브 아이스를 비운 후 쉐이커에 캡을 열고 스트레이너를 이용하여 칵테일의 얼음을 거르며 따라 준다.<br>
+4. 슬라이스 사과를 칵테일에 장식해 준다.',
+'',
+'29',                           '19', '59', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/v3drK4tsrtE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --23.75
+insert into cocktail values(
+cock_seq.nextval, '금산', 'Geumsan', 'G', 'Geumsan.jpg', '전통주', '금산 인삼주 | 커피 리큐어 | 애플 퍼커 | 라임 주스', '흔들기(Shaking)', '칵테일(Cocktail)/90ml', '0', '0', 'X',
+'1. 칵테일 글라스에 큐브 아이스 2~3개를 넣고 잔을 차갑게 한다.<br>
+2. 쉐이커에 큐브 아이스 4~5개를 넣고 금산 인삼주(45ml), 커피 리큐어(15ml), 애플 퍼커(15ml), 라임 주스(1tsp)를 순서대로 넣은 후 스트레이너와 캡을 정확히 닫은 후 쉐이커를 약 10회 정도 흔들어 준다.<br>
+3. 칵테일 글라스에 있는 큐브 아이스를 비운 후 쉐이커에 캡을 열고 스트레이너를 이용하여 칵테일의 얼음을 거르며 따라 준다.',
+'',
+'39',                           '39', '19', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/ifWIoYd3gXo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --32.8
+insert into cocktail values(
+cock_seq.nextval, '고창', 'Gochang', 'G', 'Gochang.jpg', '전통주', '선운산 복분자 와인 | 꼬엥뜨로 or 트리플 섹 | 스프라이트 or 사이다', '휘젓기(Sittring)/직접넣기(Building)', '샴페인(Champagne)/180ml', '0', '0', '트위스트 오렌지',
+'1. 샴페인 글라스를 준비한다.<br>
+2. 믹싱 글라스에 큐브 아이스 4~5개를 넣고 선운산 복분자 와인(60ml), 꼬엥뜨로 or 트리플 섹(15ml)를 순서대로 넣은 후 바 스푼을 이용하여 내용물을 3~4회 저어준다.<br>
+3. 스트레이너를 이용하여 믹싱 글라스에 있는 칵테일의 얼음을 거르며 내용물만 준비된 글라스에 따라 준다.<br>
+4. 사이다(60ml)를 넣어주고 트위스트 오렌지로 칵테일에 장식해 준다.',
+'',
+'19',                           '349', '19', '<iframe width="1000" height="600" src="https://www.youtube.com/embed/h81zieyO5Dg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+);  --11.5555
+
+commit;
+
+

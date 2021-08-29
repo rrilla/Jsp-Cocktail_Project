@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <!-- Title -->
+    <title>One Music - Modern Music HTML5 Template</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="img/core-img/favicon.ico">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+
+<style>
+	.searchBar {
+	  margin-top: 4px;
+	  position: relative;
+	  z-index: 1;
+	  display: inline-block;
+	  min-width: 212px;
+	  height: 35px;
+	  color: #000;
+	  border: 1px solid #000;
+	  border-radius: 0;
+	  padding: 0 30px;
+	  font-size: 15px;
+	  line-height: 47px;
+	  font-weight: 700;
+	  text-transform: capitalize; 
+	}
+	.oneMusic-btn.btn-2 {
+    	background-color: #000000;
+    	color: #ffffff; 
+    }
+    .oneMusic-btn.btn-2:hover{
+      background-color: #ffffff;
+      color: #000000; 
+    }
+    .logo {
+    width: auto; height: auto;
+    max-width: 130px;
+    max-height: 130px;
+    }
+    .searchbar{
+      position: fixed;
+      width: 100%;
+      height: 80px;
+      bottom: 0px;
+      left: 0px;
+      z-index: 1000; 
+      background: black;
+      opacity: 1;
+   }
+    .searchbar .category{
+       float:left;
+       width: 33%;
+       opacity: 1;
+       color: white;
+       text-align: center;
+    }
+    .searchbar .searchbtn{
+       float:left;
+       width: 10%;
+       opacity: 1;
+       color: white;
+       text-align: center;
+    }
+    .input-info {
+   display: flex;
+   justify-content: center;
+   align-content: center;
+	}
+	
+	.form-chek {
+	   display: inline-block;
+	   line-height: 20px;
+	   vertical-align: middle;
+	}
+	
+	.form-chek::before{
+	   content: "";
+	   display: inline-block;
+	   width: 10px;
+	   height: 10px;
+	   background: #ffffff;
+	   border: 1px solid #e0e0e0;
+	   margin-right: 8px;
+	   color: white;
+	}
+	
+	.input-chek{
+	   display: none;
+	}
+	
+	.input-chek:checked+.form-chek::before{
+	   background: #749fbb;
+	}
+	
+	.input-chek:checked+.form-chek{
+	   color: #749fbb;
+	}
+	
+	input[type=range] {
+	   width: 100%;
+	   height: 8.4px;
+	   cursor: pointer;
+	   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+	   background: #000000;
+	   border-radius: 1.3px;
+	   border: 0.2px solid #010101;
+	}
+}
+</style>
+
+</head>
+
+<body>
+    <!-- Preloader -->
+    <div class="preloader d-flex align-items-center justify-content-center">
+        <div class="lds-ellipsis">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+
+    <!-- ##### Header Area Start ##### -->
+    <header class="header-area" style="top: 0px;">
+        <!-- Navbar Area -->
+        <div class="oneMusic-main-menu">
+            <div class="classy-nav-container breakpoint-off" style="background: #000000;">
+                <div class="container">
+                    <!-- Menu -->
+                    <nav class="classy-navbar justify-content-between" id="oneMusicNav">
+
+                        <!-- Nav brand -->
+                        <a href="main.html" class="nav-brand"><img src="img/web-img/logoM.png" alt=""></a>
+
+                        <!-- Navbar Toggler -->
+                        <div class="classy-navbar-toggler">
+                            <span class="navbarToggler"><span></span><span></span><span></span></span>
+                        </div>
+
+                        <!-- Menu -->
+                        <div class="classy-menu">
+
+                            <!-- Close Button -->
+                            <div class="classycloseIcon">
+                                <div class="cross-wrap"><span class="top"></span><span class="bottom"></span></div>
+                            </div>
+
+                             <div class="classynav">
+                                <ul>
+                                    <li><input type="text" id="cockName" class="searchBar" value="블랙러시안"><!-- placeholder는 임의의 값 보일 수 있게 함 --></li>
+                                    <li><a href="nameSearch.html" id="searchBtn" class="btn oneMusic-btn btn-2 m-2" style="margin-top:5px;">Send <i class="fa fa-angle-double-right"></i></a></li>
+                                </ul>
+
+
+                                <!-- Login/Register & Cart Button -->
+                                <div class="login-register-cart-button d-flex align-items-center">
+                                    <!-- Login/Register -->
+                                    <div class="login-register-btn mr-50">
+                                        <a href="login.html" id="loginBtn">Login / Register</a>
+                                    </div>
+
+                                    <!-- Cart Button -->
+                                    <div class="cart-btn">
+                                        <a href="mypage.html"><p><span class="icon-shopping-cart"></span>0</p></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- ##### Header Area End ##### -->
+
+   <!-- ##### Hero Area Start ##### -->
+    <section class="breadcumb-area bg-img bg-overlay" style="background-image: url(img/web-img/main-back4-2.jpg);">
+        <div class="bradcumbContent">
+            <p>Search</p>
+            <h2>List</h2>
+        </div>
+    </section>
+    <!-- ##### Events Area Start ##### -->
+    <section class="events-area section-padding-100">
+        <div class="container">
+            <div class="row">
+
+                <!-- Single Event Area -->
+               
+                <div class="col-12 col-md-6 col-lg-4">
+	               <div class="single-event-area mb-30">
+	 					<a href="detail.html">
+	                        <div class="event-thumbnail">
+	                            <img src="img/web-img/cock3.jpg"  alt="">
+	                        </div>
+	                        <div class="event-text">
+	                            <h4>피치크러쉬</h4>
+	                            <div class="event-meta-data">
+	                                <p class="event-place">리큐어</p>
+	                                <p class="event-date">달달</p>
+	                            </div>
+	                        </div>
+	                     </a>    
+	                </div> 
+                </div>
+                                <div class="col-12 col-md-6 col-lg-4">
+	               <div class="single-event-area mb-30">
+	 					<a href="detail.html">
+	                        <div class="event-thumbnail">
+	                            <img src="img/web-img/cock3.jpg"  alt="">
+	                        </div>
+	                        <div class="event-text">
+	                            <h4>피치크러쉬</h4>
+	                            <div class="event-meta-data">
+	                                <p class="event-place">리큐어</p>
+	                                <p class="event-date">달달</p>
+	                            </div>
+	                        </div>
+	                     </a>    
+	                </div> 
+                </div>
+                                <div class="col-12 col-md-6 col-lg-4">
+	               <div class="single-event-area mb-30">
+	 					<a href="detail.html">
+	                        <div class="event-thumbnail">
+	                            <img src="img/web-img/cock3.jpg"  alt="">
+	                        </div>
+	                        <div class="event-text">
+	                            <h4>피치크러쉬</h4>
+	                            <div class="event-meta-data">
+	                                <p class="event-place">리큐어</p>
+	                                <p class="event-date">달달</p>
+	                            </div>
+	                        </div>
+	                     </a>    
+	                </div> 
+                </div>
+                                <div class="col-12 col-md-6 col-lg-4">
+	               <div class="single-event-area mb-30">
+	 					<a href="detail.html">
+	                        <div class="event-thumbnail">
+	                            <img src="img/web-img/cock3.jpg"  alt="">
+	                        </div>
+	                        <div class="event-text">
+	                            <h4>피치크러쉬</h4>
+	                            <div class="event-meta-data">
+	                                <p class="event-place">리큐어</p>
+	                                <p class="event-date">달달</p>
+	                            </div>
+	                        </div>
+	                     </a>    
+	                </div> 
+                </div>
+                                <div class="col-12 col-md-6 col-lg-4">
+	               <div class="single-event-area mb-30">
+	 					<a href="detail.html">
+	                        <div class="event-thumbnail">
+	                            <img src="img/web-img/cock3.jpg"  alt="">
+	                        </div>
+	                        <div class="event-text">
+	                            <h4>피치크러쉬</h4>
+	                            <div class="event-meta-data">
+	                                <p class="event-place">리큐어</p>
+	                                <p class="event-date">달달</p>
+	                            </div>
+	                        </div>
+	                     </a>    
+	                </div> 
+                </div>
+                                <div class="col-12 col-md-6 col-lg-4">
+	               <div class="single-event-area mb-30">
+	 					<a href="detail.html">
+	                        <div class="event-thumbnail">
+	                            <img src="img/web-img/cock3.jpg"  alt="">
+	                        </div>
+	                        <div class="event-text">
+	                            <h4>피치크러쉬</h4>
+	                            <div class="event-meta-data">
+	                                <p class="event-place">리큐어</p>
+	                                <p class="event-date">달달</p>
+	                            </div>
+	                        </div>
+	                     </a>    
+	                </div> 
+                </div>
+                                <div class="col-12 col-md-6 col-lg-4">
+	               <div class="single-event-area mb-30">
+	 					<a href="detail.html">
+	                        <div class="event-thumbnail">
+	                            <img src="img/web-img/cock3.jpg"  alt="">
+	                        </div>
+	                        <div class="event-text">
+	                            <h4>피치크러쉬</h4>
+	                            <div class="event-meta-data">
+	                                <p class="event-place">리큐어</p>
+	                                <p class="event-date">달달</p>
+	                            </div>
+	                        </div>
+	                     </a>    
+	                </div> 
+                </div>
+                                <div class="col-12 col-md-6 col-lg-4">
+	               <div class="single-event-area mb-30">
+	 					<a href="detail.html">
+	                        <div class="event-thumbnail">
+	                            <img src="img/web-img/cock3.jpg"  alt="">
+	                        </div>
+	                        <div class="event-text">
+	                            <h4>피치크러쉬</h4>
+	                            <div class="event-meta-data">
+	                                <p class="event-place">리큐어</p>
+	                                <p class="event-date">달달</p>
+	                            </div>
+	                        </div>
+	                     </a>    
+	                </div> 
+                </div>
+                                <div class="col-12 col-md-6 col-lg-4">
+	               <div class="single-event-area mb-30">
+	 					<a href="detail.html">
+	                        <div class="event-thumbnail">
+	                            <img src="img/web-img/cock3.jpg"  alt="">
+	                        </div>
+	                        <div class="event-text">
+	                            <h4>피치크러쉬</h4>
+	                            <div class="event-meta-data">
+	                                <p class="event-place">리큐어</p>
+	                                <p class="event-date">달달</p>
+	                            </div>
+	                        </div>
+	                     </a>    
+	                </div> 
+                </div>
+                
+                                
+
+            
+
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="load-more-btn text-center mt-70">
+                        <a href="#" class="btn oneMusic-btn">Load More <i class="fa fa-angle-double-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        
+        <div class="searchbar">
+           <div class="category" >
+              <input type="checkbox" class="input-chek" name="flavor" id="bit" value="bit"><label for="bit" class="form-chek" >쓴 맛</label>
+            <input type="checkbox" class="input-chek" name="flavor" id="sweet" value="sweet"><label for="sweet" class="form-chek" >단 맛</label>
+              <input type="checkbox" class="input-chek" name="flavor" id="sour" value="sour"><label for="sour" class="form-chek">신 맛</label>
+           </div>
+           <div class="category">
+              <input type="checkbox" class="input-chek" name="color" id="pink" value="pink"><label for="pink" class="form-chek">핑크</label>
+            <input type="checkbox" class="input-chek" name="color" id="blue" value="blue"><label for="blue" class="form-chek">파랑</label>
+              <input type="checkbox" class="input-chek" name="color" id="green" value="green"><label for="green" class="form-chek">초록</label>
+           </div>
+           <div class="category">
+              <input type="checkbox" class="input-chek" name="base" id="lum" value="lum"><label for="lum" class="form-chek">럼</label>
+            <input type="checkbox" class="input-chek" name="base" id="vodka" value="vodka"><label for="vodka" class="form-chek">보드카</label>
+              <input type="checkbox" class="input-chek" name="base" id="jin" value="jin"><label for="jin" class="form-chek">진</label>
+           </div>
+           <div class="searchbtn">
+              <input type="submit" value="검색">
+           </div>                      
+        </div>
+     
+    </section>
+
+    
+    
+    
+    <!-- ##### Footer Area Start ##### -->
+    <footer class="footer-area">
+        <div class="container">
+            <div class="row d-flex flex-wrap align-items-center">
+                <div class="col-12 col-md-6">
+                    <a href="#"><img class="logo" src="img/web-img/logoM.png" alt=""></a>
+                    <p class="copywrite-text"><a href="#"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with by <a href="https://colorlib.com" target="_blank">two JH</a>
+<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="footer-nav">
+                        <ul>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">Albums</a></li>
+                            <li><a href="#">Events</a></li>
+                            <li><a href="#">News</a></li>
+                            <li><a href="#">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- ##### Footer Area Start ##### -->
+
+    <!-- ##### All Javascript Script ##### -->
+    <!-- jQuery-2.2.4 js -->
+    <script src="js/jquery/jquery-2.2.4.min.js"></script>
+    <!-- Popper js -->
+    <script src="js/bootstrap/popper.min.js"></script>
+    <!-- Bootstrap js -->
+    <script src="js/bootstrap/bootstrap.min.js"></script>
+    <!-- All Plugins js -->
+    <script src="js/plugins/plugins.js"></script>
+    <!-- Active js -->
+    <script src="js/active.js"></script>
+</body>
+
+</html>
