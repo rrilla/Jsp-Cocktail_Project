@@ -17,7 +17,7 @@
                 <div class="col-12 col-md-6">
                     <div class="footer-nav">
                         <p class="copywrite-text"><a href="#"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This website is made with @ by <a href="https://colorlib.com" target="_blank">Two JaeHyeon</a>
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This website is made with @ by <a href="https://colorlib.com" target="_blank">JaeHyeon Han</a>
 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
                     </div>
                 </div>

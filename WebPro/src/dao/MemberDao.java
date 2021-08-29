@@ -144,12 +144,13 @@ public class MemberDao {
 			ps.setString(1, id);
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				if (pw.equals(rs.getString(1))) {
+				System.out.println(rs.getString(1).trim());
+				System.out.println(pw);
+				if (pw.equals(rs.getString(1).trim()) || pw == rs.getString(1).trim()) {
 					n = 1;
 				} else {
 					n = 0;
 				}
-			} else {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
