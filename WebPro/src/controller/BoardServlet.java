@@ -75,7 +75,9 @@ public class BoardServlet extends HttpServlet {
 		}else if(action.equals("login.do")) {
 			String id=request.getParameter("id");
 			String pw=request.getParameter("pw");
+			System.out.println("id: " + id + "pw : " + pw);
 			int n=MemberDao.getInstance().login(id,pw);
+			System.out.println(n);
 			writer.print(n);
 			if(n==1) {
 				System.out.println(id + " 님이 로그인 하심.");

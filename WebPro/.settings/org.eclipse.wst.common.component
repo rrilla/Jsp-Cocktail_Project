@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-<<<<<<< HEAD
     <wb-module deploy-name="com.hjh.test-0.0.1-SNAPSHOT">
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
         <property name="java-output-path" value="/final_assignment/build/classes"/>
         <property name="context-root" value="com.hjh.test"/>
-=======
-    <wb-module deploy-name="final_assignment">
-        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <property name="context-root" value="final_assignment"/>
-        <property name="java-output-path" value="/final_assignment/build/classes"/>
->>>>>>> 027f7cbb3bd78a2ff00966fd27a35b81f1575537
     </wb-module>
 </project-modules>

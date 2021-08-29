@@ -54,7 +54,7 @@
 				dataType:"text",
 				success:function(data,textStatus){
 					if(data==1){
-						alert("success");
+						alert("로그인 되었습니다.");
 						location.href=document.referrer;
 					}else if(data==0){
 						alert("password를 확인해주세요.")
