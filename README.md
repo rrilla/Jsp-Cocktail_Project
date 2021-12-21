@@ -1,6 +1,6 @@
-# OP.GG 클론 코딩
+# 칵테일에 대한 모든 것
 __부산IT교육센터 프로젝트__
-- 기간 : 2020.12.03 ~ 2020.12.15
+- 기간 : 2020.08.17 ~ 2020.08.28
 - 개발툴 : Eclipse
 - 사용 언어 : JAVA, JSP, Html5, CSS3, JavaScript, Oracle
 - 사용 기술 : Ajax, JavaMail, BootStrap, Gson, JQuery, JDBC
